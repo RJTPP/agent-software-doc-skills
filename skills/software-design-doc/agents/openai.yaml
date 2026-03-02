@@ -1,0 +1,4 @@
+interface:
+  display_name: "Software Design Doc"
+  short_description: "Draft and review SDDs with an IEEE 1016-2009-inspired structure"
+  default_prompt: "Use $software-design-doc to draft or review an SDD using an IEEE 1016-2009-inspired structure with pragmatic completeness checks. This is unofficial guidance and not IEEE-endorsed. Use original wording and do not reproduce IEEE standard text. Choose mode (`draft+review`, `draft-only`, or `review-only`) from my request and write only the relevant outputs."

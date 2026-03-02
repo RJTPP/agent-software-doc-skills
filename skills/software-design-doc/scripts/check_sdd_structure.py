@@ -1,0 +1,306 @@
+#!/usr/bin/env python3
+"""Manual structure checker for software-design-doc outputs."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import re
+from typing import Any
+
+
+SDD_REQUIRED_HEADINGS = [
+    "## Document Control",
+    "## 1. Introduction",
+    "## 2. Stakeholders and Design Concerns",
+    "## 3. Viewpoint Strategy",
+    "## 4. Design Views",
+    "## 5. Design Elements and Constraints",
+    "## 6. Traceability",
+    "## 7. Design Rationale",
+    "## 8. Risks and Mitigations",
+    "## 9. Summary",
+]
+
+DEEP_EXTENSION_REQUIRED_HEADINGS = [
+    "## System Overview",
+    "## Data Design",
+    "## Component Design",
+    "## Human Interface Design",
+    "## Requirements Traceability Matrix",
+    "## Appendices",
+    "## Design Decisions (Locked)",
+]
+
+GAP_REQUIRED_HEADINGS = [
+    "# SDD Gap Report",
+    "## Scope and Inputs",
+    "## Missing Required Content",
+    "## Weak or Implicit Rationale",
+    "## Traceability Gaps",
+    "## Recommended Fixes (Priority Ordered)",
+    "## Coverage Summary",
+]
+
+
+def _parse_heading(heading: str) -> tuple[int, str]:
+    match = re.match(r"^(#{1,6})\s+(.+?)\s*$", heading.strip())
+    if not match:
+        raise ValueError(f"Invalid heading pattern: {heading!r}")
+    return len(match.group(1)), _normalize_heading_text(match.group(2))
+
+
+def _normalize_heading_text(text: str) -> str:
+    """Normalize heading text for matching.
+
+    Supports markdown ATX closing hashes such as: ## Title ##
+    """
+    normalized = text.strip()
+    normalized = re.sub(r"\s+#+\s*$", "", normalized)
+    return normalized.strip().lower()
+
+
+def _extract_heading_sequence(markdown_text: str) -> list[tuple[int, str]]:
+    found: list[tuple[int, str]] = []
+    in_fence = False
+    fence_char = ""
+    fence_len = 0
+    for line in markdown_text.splitlines():
+        stripped = line.lstrip()
+
+        fence_match = re.match(r"^(```+|~~~+)", stripped)
+        if fence_match:
+            marker = fence_match.group(1)
+            if not in_fence:
+                in_fence = True
+                fence_char = marker[0]
+                fence_len = len(marker)
+            elif marker[0] == fence_char and len(marker) >= fence_len:
+                in_fence = False
+                fence_char = ""
+                fence_len = 0
+            continue
+
+        if in_fence:
+            continue
+
+        match = re.match(r"^(#{1,6})\s+(.+?)\s*$", stripped)
+        if not match:
+            continue
+        level = len(match.group(1))
+        text = _normalize_heading_text(match.group(2))
+        found.append((level, text))
+    return found
+
+
+def _add_check(
+    checks: list[dict[str, Any]],
+    check_id: str,
+    passed: bool,
+    severity: str,
+    evidence: str,
+) -> None:
+    checks.append(
+        {
+            "id": check_id,
+            "passed": passed,
+            "severity": severity,
+            "evidence": evidence,
+        }
+    )
+
+
+def _run_heading_checks(
+    checks: list[dict[str, Any]],
+    check_prefix: str,
+    file_path: Path,
+    required_headings: list[str],
+) -> None:
+    try:
+        text = file_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        _add_check(
+            checks,
+            f"{check_prefix}-readable",
+            False,
+            "hard",
+            f"Could not read {file_path}: {exc}",
+        )
+        return
+
+    found_sequence = _extract_heading_sequence(text)
+    found_set = set(found_sequence)
+    for heading in required_headings:
+        level, normalized_text = _parse_heading(heading)
+        present = (level, normalized_text) in found_set
+        _add_check(
+            checks,
+            f"{check_prefix}-heading-{normalized_text.replace(' ', '-')}",
+            present,
+            "soft",
+            f"{file_path} contains heading {heading!r} -> {present}",
+        )
+
+    # Validate heading order: each required heading must appear later than the
+    # previous one in the extracted sequence.
+    required_sequence = [_parse_heading(heading) for heading in required_headings]
+    found_iter = iter(found_sequence)
+    in_order = all(
+        any(found_heading == required_heading for found_heading in found_iter)
+        for required_heading in required_sequence
+    )
+
+    _add_check(
+        checks,
+        f"{check_prefix}-heading-order",
+        in_order,
+        "soft",
+        f"{file_path} required headings appear in expected order -> {in_order}",
+    )
+
+
+def run_checks(
+    mode: str,
+    docs_dir: Path,
+    allow_input_sdd: bool = False,
+    profile: str = "ieee-pragmatic",
+) -> dict[str, Any]:
+    checks: list[dict[str, Any]] = []
+
+    sdd_path = docs_dir / "SDD.md"
+    gap_path = docs_dir / "SDD-gap-report.md"
+
+    docs_exists = docs_dir.exists() and docs_dir.is_dir()
+    _add_check(
+        checks,
+        "docs-dir-exists",
+        docs_exists,
+        "hard",
+        f"{docs_dir} exists and is directory -> {docs_exists}",
+    )
+    if not docs_exists:
+        return {
+            "mode": mode,
+            "docs_dir": str(docs_dir),
+            "checks": checks,
+        }
+
+    sdd_exists = sdd_path.exists()
+    gap_exists = gap_path.exists()
+
+    if mode == "draft+review":
+        _add_check(checks, "file-sdd-exists", sdd_exists, "hard", f"{sdd_path} exists -> {sdd_exists}")
+        _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
+    elif mode == "draft-only":
+        _add_check(checks, "file-sdd-exists", sdd_exists, "hard", f"{sdd_path} exists -> {sdd_exists}")
+        _add_check(
+            checks,
+            "file-gap-optional",
+            True,
+            "soft",
+            f"{gap_path} optional in draft-only mode (exists={gap_exists})",
+        )
+    elif mode == "review-only":
+        _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
+        if allow_input_sdd:
+            _add_check(
+                checks,
+                "file-sdd-allowed",
+                True,
+                "soft",
+                f"{sdd_path} is allowed in review-only mode for colocated input (exists={sdd_exists})",
+            )
+        else:
+            _add_check(checks, "file-sdd-absent", not sdd_exists, "hard", f"{sdd_path} absent -> {not sdd_exists}")
+
+    if sdd_exists and mode != "review-only":
+        _run_heading_checks(checks, "sdd", sdd_path, SDD_REQUIRED_HEADINGS)
+        if profile == "implementation-deep":
+            _run_heading_checks(checks, "sdd-deep", sdd_path, DEEP_EXTENSION_REQUIRED_HEADINGS)
+    # In draft-only mode the gap report is optional; if it exists, ignore it by default
+    # so stale files do not fail the run.
+    if gap_exists and mode != "draft-only":
+        _run_heading_checks(checks, "gap", gap_path, GAP_REQUIRED_HEADINGS)
+
+    return {
+        "mode": mode,
+        "profile": profile,
+        "docs_dir": str(docs_dir),
+        "checks": checks,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Check software-design-doc output structure.")
+    parser.add_argument(
+        "--mode",
+        choices=["draft+review", "draft-only", "review-only"],
+        required=True,
+        help="Expected output mode.",
+    )
+    parser.add_argument(
+        "--docs-dir",
+        default="docs",
+        help="Directory containing SDD.md and/or SDD-gap-report.md",
+    )
+    parser.add_argument(
+        "--profile",
+        choices=["ieee-pragmatic", "implementation-deep"],
+        default="ieee-pragmatic",
+        help="Heading validation profile for SDD structure checks.",
+    )
+    parser.add_argument(
+        "--out",
+        default=None,
+        help="Optional path to write JSON report.",
+    )
+    parser.add_argument(
+        "--allow-soft-sections",
+        action="store_true",
+        help="Do not fail overall result when only section checks fail.",
+    )
+    parser.add_argument(
+        "--allow-input-sdd",
+        action="store_true",
+        help="In review-only mode, allow SDD.md to exist as colocated input.",
+    )
+    args = parser.parse_args()
+
+    result = run_checks(
+        args.mode,
+        Path(args.docs_dir).resolve(),
+        allow_input_sdd=args.allow_input_sdd,
+        profile=args.profile,
+    )
+    checks = result["checks"]
+    hard_fail_count = sum(1 for c in checks if c["severity"] == "hard" and not c["passed"])
+    soft_fail_count = sum(1 for c in checks if c["severity"] == "soft" and not c["passed"])
+    strict_sections = not args.allow_soft_sections
+    passed = hard_fail_count == 0 and (soft_fail_count == 0 or not strict_sections)
+    result["hard_fail_count"] = hard_fail_count
+    result["soft_fail_count"] = soft_fail_count
+    result["strict_sections"] = strict_sections
+    result["allow_soft_sections"] = args.allow_soft_sections
+    result["allow_input_sdd"] = args.allow_input_sdd
+    result["passed"] = passed
+
+    for check in checks:
+        status = "PASS" if check["passed"] else "FAIL"
+        print(f"[{status}] ({check['severity']}) {check['id']}: {check['evidence']}")
+    print(
+        f"Summary: profile={args.profile} checks={len(checks)} hard_fail={hard_fail_count} soft_fail={soft_fail_count} "
+        f"strict_sections={strict_sections} overall={'PASS' if passed else 'FAIL'}"
+    )
+
+    if args.out:
+        out_path = Path(args.out).resolve()
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        print(f"Wrote JSON report to {out_path}")
+
+    return 0 if passed else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
