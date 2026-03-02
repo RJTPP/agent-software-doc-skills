@@ -1,0 +1,33 @@
+{
+  "skill_name": "software-design-doc",
+  "evals": [
+    {
+      "id": 1,
+      "name": "draft-invoice-platform",
+      "mode": "draft+review",
+      "prompt": "Create an SDD using an IEEE 1016-2009-inspired structure (non-verbatim, unofficial, not IEEE-endorsed) for a cloud-based invoice processing platform from this PRD summary: multi-tenant web app, REST API, OCR ingestion pipeline, role-based access, audit logs, and nightly reporting jobs. Default output paths are fine.",
+      "expected_output": "Creates docs/SDD.md and docs/SDD-gap-report.md with concern-driven viewpoints, architecture/interfaces/data coverage, prioritized remediation actions, and original wording.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "review-only-gap-analysis",
+      "mode": "review-only",
+      "prompt": "Review the existing SDD in `evals/fixtures/review-only-input-sdd.md` for completeness and gaps. It has intro, architecture notes, and deployment details but lacks explicit interface contracts, weak rationale, and no requirement traceability. Use review-only mode.",
+      "expected_output": "Produces docs/SDD-gap-report.md only, with missing required content, weak rationale findings, traceability gaps, and prioritized fixes.",
+      "files": [
+        "evals/fixtures/review-only-input-sdd.md"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "migration-monolith-to-microservices",
+      "mode": "draft+review",
+      "prompt": "Update the monolith SDD in `evals/fixtures/monolith-before-migration-sdd.md` after a migration decision to event-driven microservices with service boundaries, async messaging, API gateway, and separate operational data stores. Use draft+review mode.",
+      "expected_output": "Updates docs/SDD.md to reflect new architecture decisions and writes docs/SDD-gap-report.md covering impact, new risks, and remaining gaps.",
+      "files": [
+        "evals/fixtures/monolith-before-migration-sdd.md"
+      ]
+    }
+  ]
+}
