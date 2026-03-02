@@ -4,7 +4,7 @@ description: Draft, review, and update Software Design Documents using an IEEE 1
 license: MIT
 metadata:
   author: RJTPP
-  version: 0.1.0
+  version: 0.2.0
 ---
 
 # Software Design Doc
