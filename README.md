@@ -26,7 +26,7 @@
 
 - This repository provides independently authored templates, checklists, and workflows informed by IEEE 1016-2009 concepts.
 - It does not include IEEE standard text, figures, or tables, and it is not a substitute for the official standard.
-- It is unofficial and not endorsed by IEEE or IEEE Standards Association.
+- This repository is unofficial guidance.
 - IEEE standards are copyrighted by IEEE; use a properly licensed copy when you need normative wording.
 - "IEEE" and related marks are trademarks of IEEE.
 - Official IEEE standard page: [IEEE Std 1016-2009](https://standards.ieee.org/ieee/1016/4502/).

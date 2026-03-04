@@ -12,42 +12,78 @@ Describe the software design for the commerce core platform.
 ### 1.2 Scope
 Single deployable application for catalog, checkout, billing, and notifications.
 
-## 2. Stakeholders and Concerns
+## 2. System Overview
+### 2.1 Product and Runtime Context
+One monolithic service handles business domains and background jobs.
+
+### 2.2 External Systems and Integrations
+Integrates with payment gateway, tax provider, and email service.
+
+## 3. Stakeholders and Design Concerns
+### 3.1 Stakeholder List
 - Product: rapid feature delivery
 - Operations: low operational overhead
 - Security: strict auditability
 
-## 3. Viewpoint Strategy
-- Selected: Context, Logical, Information, Interface
-- Omitted: Resources (not documented), Interaction (partial)
+### 3.2 Concern Catalog
+- Checkout latency
+- Release risk from shared deployable
+- Data consistency across modules
 
-## 4. Design Views
-### 4.1 Context View
-The monolith integrates with payment gateway, tax provider, and email service.
-
-### 4.3 Logical View
+## 4. Architecture Overview
+### 4.1 Logical Architecture
 Modules: Catalog, Orders, Billing, Notifications.
 
-### 4.5 Information View
-Single relational schema with shared transactional tables.
+### 4.2 Deployment and Runtime Topology
+Single application deployment backed by one relational database.
 
-### 4.6 Interface View
-REST endpoints exposed from one application service.
+## 5. Viewpoints and Views
+### 5.1 Viewpoint-to-View Mapping
+| Viewpoint | View |
+| --- | --- |
+| Context | 5.2 Context View |
+| Logical | 5.4 Logical View |
+| Information | 5.6 Information View |
+| Interface | 5.7 Interface View |
 
-## 5. Design Elements and Constraints
-- One shared database
-- Synchronous intra-module calls
-- Shared deployment lifecycle
+### 5.2 Context View
+The monolith interfaces with payment, tax, and email providers.
 
-## 6. Traceability
-- Checkout latency concerns map to Billing and Orders modules.
-- Security concerns map to Billing and audit logging.
+### 5.4 Logical View
+Modules are tightly coupled inside one runtime.
 
-## 7. Design Rationale
-- Monolith was selected to reduce initial delivery complexity.
+### 5.6 Information View
+Single shared schema with transactional tables.
 
-## 8. Risks and Mitigations
-- Tight coupling across modules may slow independent scaling.
+### 5.7 Interface View
+REST endpoints are exposed from one application service.
 
-## 9. Summary
+## 6. Design Elements and Constraints
+### 6.1 Design Element Catalog (Formal Definitions)
+Component: Orders Module
+Responsibility: Handle order lifecycle and orchestration.
+Inputs: REST create/update order requests.
+Outputs: Order state changes and domain events.
+Dependencies: Catalog, Billing, shared database.
+
+Component: Billing Module
+Responsibility: Charge payment methods and issue invoices.
+Inputs: Order settlement requests.
+Outputs: Payment confirmations and billing records.
+Dependencies: Payment gateway, shared database.
+
+### 6.4 Constraints and Assumptions
+Shared deployment lifecycle and schema coupling limit independent scaling.
+
+## 7. Traceability
+Checkout latency concern maps to Orders/Billing module boundaries.
+Security concern maps to billing controls and audit logging.
+
+## 8. Design Rationale
+Monolith was selected initially to reduce delivery complexity.
+
+## 9. Risks and Mitigations
+Tight coupling increases blast radius for runtime and release failures.
+
+## 10. Summary
 Current design is stable but scaling constraints are increasing.

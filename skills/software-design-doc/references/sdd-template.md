@@ -13,24 +13,24 @@
 - Change History:
 
 ## 1. Introduction
-- What to include: framing context so readers can quickly understand why this SDD exists and how to use it.
-- Minimum evidence: purpose, scope boundaries, audience, references, and terminology are explicit.
+- What to include: why this SDD exists, scope boundaries, and how to use it.
+- Minimum evidence: purpose, scope, audience, references, and terminology are explicit.
 
 ### 1.1 Purpose
-- What to include: design intent and expected decision support this document provides.
+- What to include: design intent and decisions this SDD supports.
 - Minimum evidence: 1-3 concrete outcomes this document enables.
 
 ### 1.2 Scope
-- What to include: in-scope capabilities and explicit out-of-scope boundaries.
-- Minimum evidence: at least one out-of-scope statement.
+- What to include: in-scope capabilities and out-of-scope boundaries.
+- Minimum evidence: at least one explicit out-of-scope statement.
 
 ### 1.3 Context
-- What to include: business/system context, upstream/downstream dependencies, and operating environment.
+- What to include: business/system context and dependencies.
 - Minimum evidence: key external systems and constraints identified.
 
 ### 1.4 Intended Audience
-- What to include: reader groups (engineering, QA, operations, security, product, support).
-- Minimum evidence: each audience mapped to how they should use this SDD.
+- What to include: reader groups and how each uses the SDD.
+- Minimum evidence: at least engineering, QA, and operations guidance.
 
 ### 1.5 References
 - What to include: PRD, ADRs, API specs, schemas, compliance docs, and repo paths.
@@ -40,134 +40,150 @@
 - What to include: domain-specific terms, abbreviations, and overloaded words.
 - Minimum evidence: ambiguous terms defined once and used consistently.
 
-## 2. Stakeholders and Design Concerns
+## 2. System Overview
+- What to include: system boundary, runtime model, and major platform context.
+- Minimum evidence: summary of deployment/runtime shape and system responsibilities.
+
+### 2.1 Product and Runtime Context
+- What to include: product purpose, runtime boundaries, and execution model.
+- Minimum evidence: client/server/background/runtime actors identified.
+
+### 2.2 External Systems and Integrations
+- What to include: external dependencies and trust boundaries.
+- Minimum evidence: each integration has purpose and boundary notes.
+
+### 2.3 Operating Constraints
+- What to include: platform, compliance, latency, reliability, and delivery constraints.
+- Minimum evidence: constraints are explicit and actionable.
+
+## 3. Stakeholders and Design Concerns
 - What to include: who cares about the design and what concerns must be addressed.
 - Minimum evidence: concerns are specific enough to validate in later sections.
 
-### 2.1 Stakeholder List
-- What to include: stakeholder names/roles and responsibility boundaries.
-- Minimum evidence: technical and non-technical stakeholders both represented.
+### 3.1 Stakeholder List
+- What to include: stakeholder roles and responsibilities.
+- Minimum evidence: technical and non-technical stakeholders represented.
 
-### 2.2 Concern Catalog
-- What to include: functional, quality, operational, security, data, and delivery concerns.
+### 3.2 Concern Catalog
+- What to include: functional, quality, operational, security, and data concerns.
 - Minimum evidence: each concern has priority and acceptance intent.
 
-## 3. Viewpoint Strategy
-- What to include: the rationale for chosen views, omitted views, and notation choices.
-- Minimum evidence: each selected viewpoint maps to at least one concern.
+### 3.3 Non-Functional Targets (Recommended)
+- What to include: measurable targets for performance, accessibility, and reliability.
+- Minimum evidence: at least one measurable target per critical NFR category.
 
-### 3.1 Selected Viewpoints and Why
-- What to include: selected viewpoints and concern coverage rationale.
-- Minimum evidence: clear reason each selected viewpoint is needed.
+## 4. Architecture Overview
+- What to include: high-level architecture with logical and deployment/runtime depiction.
+- Minimum evidence: one architecture diagram (or equivalent structured representation).
 
-### 3.2 Omitted Viewpoints (N/A with Reason)
-- What to include: viewpoints not used and why omission is acceptable.
-- Minimum evidence: explicit N/A reason for each omitted viewpoint.
+### 4.1 Logical Architecture
+- What to include: major layers/modules and responsibility boundaries.
+- Minimum evidence: components grouped by architectural role.
 
-### 3.3 Design Languages / Notations
-- What to include: diagrams, schema formats, interface notation, and text conventions.
-- Minimum evidence: each notation is named and used consistently.
+### 4.2 Deployment and Runtime Topology
+- What to include: runtime nodes/environments and communication paths.
+- Minimum evidence: clear runtime boundary and path descriptions.
 
-## 4. Design Views
-- What to include: coherent views that collectively answer the concern catalog.
-- Minimum evidence: every high-priority concern is visible in one or more views.
+### 4.3 Critical Flow Summary
+- What to include: one key end-to-end flow across major components.
+- Minimum evidence: flow steps and primary dependencies stated.
 
-### 4.1 Context View
+## 5. Viewpoints and Views
+- What to include: selected viewpoints and the concrete views produced from each.
+- Minimum evidence: every high-priority concern is covered by one or more views.
+
+### 5.1 Viewpoint-to-View Mapping
+- What to include: explicit mapping table from viewpoint to concrete view sections.
+- Minimum evidence: each selected viewpoint maps to at least one named view.
+
+### 5.2 Context View
 - What to include: system boundary, actors, external systems, and trust boundaries.
 - Minimum evidence: boundary diagram or equivalent structured description.
 
-### 4.2 Composition View
+### 5.3 Composition View
 - What to include: major subsystems/components and ownership boundaries.
 - Minimum evidence: decomposition with responsibilities per component.
 
-### 4.3 Logical View
+### 5.4 Logical View
 - What to include: domain model/types and key invariants.
 - Minimum evidence: principal entities/types and their relationships listed.
 
-### 4.4 Dependency View
+### 5.5 Dependency View
 - What to include: compile/runtime dependencies and coupling constraints.
 - Minimum evidence: critical dependency paths and impact notes.
 
-### 4.5 Information View
+### 5.6 Information View
 - What to include: data entities, stores, lifecycle, and access boundaries.
 - Minimum evidence: key data flows and data ownership documented.
 
-### 4.6 Interface View
+### 5.7 Interface View
 - What to include: API contracts, events, protocols, and error semantics.
 - Minimum evidence: interface contract examples with request/response or event schema.
 
-### 4.7 Interaction / State / Algorithm Views (as applicable)
-- What to include: behavior over time, key flows, state transitions, and core algorithms.
+### 5.8 Interaction / State / Algorithm Views (as applicable)
+- What to include: behavior over time, state transitions, and key algorithms.
 - Minimum evidence: at least one critical runtime flow represented.
 
-### 4.8 Structure View (as applicable)
-- What to include: internal composition of a complex subsystem.
-- Minimum evidence: structure details that guide implementation split.
-
-### 4.9 Resource View (as applicable)
+### 5.9 Resource View (as applicable)
 - What to include: performance, scaling limits, quotas, and capacity assumptions.
 - Minimum evidence: resource budgets or SLO-linked constraints documented.
 
-## 5. Design Elements and Constraints
-- What to include: named design entities, relationships, and governing constraints.
-- Minimum evidence: constraints are testable or reviewable.
+## 6. Design Elements and Constraints
+- What to include: formally defined design elements, interfaces, relationships, and constraints.
+- Minimum evidence: entities and constraints are reviewable and testable.
 
-### 5.1 Core Design Entities
-- What to include: primary entities/components and responsibilities.
-- Minimum evidence: each entity has a short role definition.
+### 6.1 Design Element Catalog (Formal Definitions)
+- What to include: each key component in a formal field-based definition.
+- Minimum evidence: each entry includes `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`.
 
-### 5.2 Relationships
+### 6.2 Interfaces and Data Structures
+- What to include: interface boundaries and key structures/schemas.
+- Minimum evidence: versioning/error/compatibility expectations are explicit.
+
+### 6.3 Relationships
 - What to include: dependencies, associations, ownership, and communication paths.
 - Minimum evidence: relationship direction and cardinality/strength where relevant.
 
-### 5.3 Constraints and Assumptions
-- What to include: technology, compliance, runtime, org, and schedule constraints.
+### 6.4 Constraints and Assumptions
+- What to include: technology, compliance, runtime, organizational, and schedule constraints.
 - Minimum evidence: assumptions are explicit with risk if invalid.
 
-## 6. Traceability
+### 6.5 Runtime State and Data Notes (Recommended)
+- What to include: persistent data vs runtime state vs configuration boundaries.
+- Minimum evidence: each category explicitly marked (or `None` with rationale).
+
+## 7. Traceability
 - What to include: links between concerns/requirements and design decisions/views.
 - Minimum evidence: unresolved gaps are visible and prioritized.
 
-### 6.1 Requirement/Concern to Design Mapping
+### 7.1 Requirement/Concern to Design Mapping
 - What to include: mapping table from requirement/concern IDs to sections/components.
 - Minimum evidence: all critical requirements mapped.
 
-### 6.2 Coverage and Gaps
+### 7.2 Coverage and Gaps
 - What to include: missing, partial, and deferred coverage items.
 - Minimum evidence: each gap has owner and next action.
 
-## 7. Design Rationale
+## 8. Design Rationale
 - What to include: why decisions were made and alternatives rejected.
 - Minimum evidence: major tradeoffs are explicit.
 
-### 7.1 Key Decisions
+### 8.1 Key Decisions
 - What to include: decision statements with context and impact.
 - Minimum evidence: each decision has rationale and consequence.
 
-### 7.2 Alternatives Considered
+### 8.2 Alternatives Considered
 - What to include: realistic alternatives and rejection reasons.
 - Minimum evidence: at least one meaningful alternative per major decision.
 
-### 7.3 Tradeoff Analysis
+### 8.3 Tradeoff Analysis
 - What to include: cost/performance/security/complexity tradeoffs.
 - Minimum evidence: tradeoff dimensions are comparable and justified.
 
-## 8. Risks and Mitigations
+## 9. Risks and Mitigations
 - What to include: technical, operational, delivery, and security risks.
 - Minimum evidence: each risk includes likelihood, impact, mitigation, and owner.
 
-## 9. Summary
-- What to include: final design posture, unresolved decisions, and handoff readiness.
+## 10. Summary
+- What to include: design posture, unresolved decisions, and implementation readiness.
 - Minimum evidence: implementation next steps are clear.
-
-## Appendices
-- What to include: supporting details that are useful but not core to the narrative.
-- Minimum evidence: appendix references are linked from relevant main sections.
-
-### A. Overlays (if used)
-- What to include: derived or detail overlays tied to base views.
-- Minimum evidence: each overlay references its base view.
-
-### B. Additional Detail (optional)
-- What to include: overflow tables, extended examples, and supplemental notes.
-- Minimum evidence: content is relevant and non-duplicative.
