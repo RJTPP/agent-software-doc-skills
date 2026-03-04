@@ -1,29 +1,29 @@
 ---
 name: software-design-doc
-description: Draft, review, and update Software Design Documents using an IEEE 1016-2009-inspired structure with pragmatic completeness checks and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
+description: Draft, review, and update Software Design Documents using an IEEE 1016-2009-inspired structure with strict section ordering, explicit architecture/views/elements formalization, and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
 license: MIT
 metadata:
   author: RJTPP
-  version: 0.2.1-dev
+  version: 0.3.0
 ---
 
 # Software Design Doc
 
-Create or review an SDD using a structure inspired by IEEE 1016-2009 concepts while staying pragmatic for the project context.
+Create or review an SDD using an IEEE 1016-inspired structure while staying pragmatic for project context.
 
 ## Resources
 
 - Use [references/sdd-completeness-checklist.md](references/sdd-completeness-checklist.md) for completeness gates and required content coverage.
 - Use [references/sdd-template.md](references/sdd-template.md) as the default SDD structure.
 - Use [references/sdd-template-implementation-deep.md](references/sdd-template-implementation-deep.md) when detail profile is `implementation-deep`.
-- Use [references/viewpoint-mapping.md](references/viewpoint-mapping.md) to choose and justify design viewpoints.
-- Use [references/copyright-safety.md](references/copyright-safety.md) for mandatory copyright guardrails.
-- Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate mode/file contract and required headings in generated outputs.
+- Use [references/viewpoint-mapping.md](references/viewpoint-mapping.md) to choose viewpoints and map them to concrete views.
+- Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
+- Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required headings and ordering.
 
 Mandatory preflight sequence:
 
-1. Read necessary available context first (PRD/SDD/repo docs relevant to request).
-2. Recommend mode, detail profile, and interaction option based on that context.
+1. Read available context first (PRD/SDD/repo docs relevant to the request).
+2. Recommend mode, detail profile, and interaction option from that context.
 3. Ask for user confirmation before drafting.
 
 Do not start drafting until preflight confirmation is received, unless user explicitly uses `/fast` or `/assume`.
@@ -31,24 +31,24 @@ Do not start drafting until preflight confirmation is received, unless user expl
 ## Copyright and Standards Safety (Mandatory)
 
 - Treat IEEE 1016-2009 as a conceptual reference only.
-- Treat this skill as unofficial and not IEEE-endorsed.
 - Use original wording in all generated outputs.
 - Do not reproduce or closely paraphrase any copyrighted standard text, tables, or figures.
-- Do not provide clause text on request; provide section alignment guidance and ask the user to consult their licensed standard copy for normative wording.
-- When referring to IEEE structure, cite section identifiers only (for example "Clause 4"), not normative text.
+- Do not provide clause text on request; provide section-alignment guidance and ask the user to consult their licensed standard copy for normative wording.
+- When referring to IEEE structure, cite section identifiers only (for example `Clause 4`), not normative text.
+- If a disclaimer is needed, include one concise line only (for example, `IEEE 1016-inspired internal guidance, unofficial.`).
 
 ## Defaults
 
 - Mode: `draft+review`.
 - Completeness strictness: `pragmatic`.
 - Detail profile: `ieee-pragmatic`.
-- Codebase inspection: enabled if repository context is available.
+- Codebase inspection: enabled when repository context is available.
 - Output files:
   - `docs/SDD.md`
   - `docs/SDD-gap-report.md`
 
 If the user specifies a different mode, follow the user preference.
-If the user specifies a different output path, only accept a safe relative path within the project folder (see output path safety rules below).
+If the user specifies a different output path, only accept a safe relative path inside the project folder.
 
 Mode shortcuts accepted in user prompts:
 
@@ -59,21 +59,21 @@ Mode shortcuts accepted in user prompts:
 Mode resolution precedence:
 
 1. Explicit shortcut token in the prompt (`/de`, `/d`, `/r`, or long form)
-2. Clear natural-language intent (for example "review only")
+2. Clear natural-language intent (for example `review only`)
 3. Default to `draft+review`
 
 Interaction options:
 
-- `/ask` (default behavior): confirm scope/mode/inputs before drafting and request missing critical info.
+- `/ask` (default): confirm scope/mode/inputs before drafting and request missing critical info.
 - `/fast`: proceed immediately with reasonable assumptions, then list assumptions in the output.
 - `/assume`: proceed with assumptions even if inputs are incomplete, and clearly mark assumption-based sections.
 
 Detail profile options:
 
-- `ieee-pragmatic` (default): IEEE 1016 core structure + concise implementation guidance.
-- `implementation-deep`: Keep all core template sections and add deeper implementation appendices.
+- `ieee-pragmatic` (default): strict base structure with concise implementation guidance.
+- `implementation-deep`: keep all base sections and add deeper implementation sections.
 
-If user asks for "detailed", "implementation handoff", "architecture deep dive", "ERD/data dictionary", or "full design package", use `implementation-deep`.
+If user asks for `detailed`, `implementation handoff`, `architecture deep dive`, `ERD/data dictionary`, or `full design package`, use `implementation-deep`.
 
 ## Output Path Safety (Mandatory)
 
@@ -103,7 +103,7 @@ Useful optional inputs:
 
 Before drafting, perform an intake check:
 
-1. Confirm mode, detail profile, and output path inside the project folder.
+1. Confirm mode, detail profile, and output path.
 2. Confirm whether repository inspection should be used.
 3. Identify missing critical inputs (PRD context, existing SDD, key constraints).
 
@@ -147,41 +147,36 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 4. Draft or update SDD
 
-- Follow the default structure from `references/sdd-template.md`.
+- Follow section order from `references/sdd-template.md` (or deep template when applicable).
 - Use original wording; do not quote or mirror copyrighted standards text.
-- Include rationale for major decisions and viewpoint selection.
-- Include traceability mapping from requirement concerns to design sections.
-- Preserve core template sections in all profiles; never replace the base structure with custom-only sections.
-- Use Mermaid diagrams for architecture/flow/state representations when they improve clarity.
-- If detail profile is `implementation-deep`, add the following sections as extensions:
-  - `## System Overview` (deployment topology and runtime boundaries)
-  - `## Data Design` (ERD summary, data dictionary, client-side cache/storage model)
-  - `## Component Design` (subsystems, responsibilities, key interfaces/routes)
-  - `## Human Interface Design` (screen/wireframe references where available)
-  - `## Requirements Traceability Matrix`
-  - `## Appendices` (sequence/state/config/cache/security/testing/risk)
-  - `## Design Decisions (Locked)`
-  - Include at least two Mermaid diagrams:
-    - one system context/component diagram
-    - one sequence or state diagram for a key operational flow
+- Preserve required headings and ordering.
+- Include Mermaid diagrams when they improve clarity.
+- Always include the core-3 formal artifacts:
+  - `## 4. Architecture Overview`
+  - `### 5.1 Viewpoint-to-View Mapping`
+  - `### 6.1 Design Element Catalog (Formal Definitions)` with fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`
+- If detail profile is `implementation-deep`, include extension sections:
+  - `## 11. Data Design`
+  - `## 12. Component Design`
+  - `## 13. Human Interface Design`
+  - `## 14. Requirements Traceability Matrix`
+  - `## 15. Appendices`
+  - `## 16. Design Decisions (Locked)`
 
 5. Run pragmatic completeness pass
 
-- Check core SDD content coverage mapped to IEEE 1016-2009 Clause 4 themes (without reproducing standard text).
+- Check coverage against core IEEE-inspired structure themes without reproducing standard text.
 - Check concern-to-view coverage and missing decisions.
+- Ensure architecture/viewpoint/element formalization is explicit and reviewable.
 - Allow justified simplification for project scale.
-- In `implementation-deep`, also check extension consistency:
-  - product/system name is consistent across title, document control, and body
-  - version references are consistent with source artifacts
-  - references to PRD/PDD/source files are accurate and non-conflicting
 
 6. Write outputs
 
 - Ensure parent directory exists.
-- Resolve output paths safely inside the repository root only. Reject and ask for a safe path if the requested path is absolute, contains `..`, or targets a sensitive path.
-- For `draft+review` or `draft-only`, write `docs/SDD.md` by default (or another safe in-repo path if requested).
-- For `draft+review` or `review-only`, write `docs/SDD-gap-report.md` by default (or another safe in-repo path if requested).
-- In `review-only`, do not modify the source SDD unless explicitly requested.
+- Resolve output paths safely inside repository root only.
+- For `draft+review` or `draft-only`, write `docs/SDD.md` by default.
+- For `draft+review` or `review-only`, write `docs/SDD-gap-report.md` by default.
+- In `review-only`, do not modify source SDD unless explicitly requested.
 
 7. Validate generated outputs
 
@@ -189,6 +184,22 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Section completeness is strict by default; use `--allow-soft-sections` only when section checks should be advisory.
 - In `review-only`, use `--allow-input-sdd` if source SDD is colocated with generated gap report.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
+
+## Required Base Section Order
+
+Use these headings in this exact order:
+
+1. `## Document Control`
+2. `## 1. Introduction`
+3. `## 2. System Overview`
+4. `## 3. Stakeholders and Design Concerns`
+5. `## 4. Architecture Overview`
+6. `## 5. Viewpoints and Views`
+7. `## 6. Design Elements and Constraints`
+8. `## 7. Traceability`
+9. `## 8. Design Rationale`
+10. `## 9. Risks and Mitigations`
+11. `## 10. Summary`
 
 ## Gap Report Format
 
@@ -208,16 +219,16 @@ Use these headings in order:
 - If an item is omitted, provide a short `N/A rationale`.
 - Favor correctness and implementability over ceremonial detail.
 - Keep terminology consistent with the project domain.
-- If the user asks for exact IEEE wording, decline and provide a non-verbatim summary instead.
+- If the user asks for exact IEEE wording, decline and provide a non-verbatim summary.
 
 ## Output Quality Bar
 
 - SDD sections are complete enough for implementation handoff.
-- Viewpoint choices are explicit and concern-driven.
+- Architecture overview is explicit and includes logical plus deployment/runtime depiction.
+- Viewpoint choices are explicit with viewpoint-to-view mapping.
+- Design elements are formally defined with component fields.
 - Gap report recommendations are actionable and prioritized.
-- No machine-specific assumptions or absolute local-only dependencies in the document content.
-- Core template sections remain intact even when adding deep implementation sections.
-- Names/versions/references are consistent across all sections.
+- No machine-specific assumptions or absolute local-only dependencies in document content.
 
 ## Example Requests That Should Trigger This Skill
 

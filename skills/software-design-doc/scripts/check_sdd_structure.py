@@ -13,24 +13,29 @@ from typing import Any
 SDD_REQUIRED_HEADINGS = [
     "## Document Control",
     "## 1. Introduction",
-    "## 2. Stakeholders and Design Concerns",
-    "## 3. Viewpoint Strategy",
-    "## 4. Design Views",
-    "## 5. Design Elements and Constraints",
-    "## 6. Traceability",
-    "## 7. Design Rationale",
-    "## 8. Risks and Mitigations",
-    "## 9. Summary",
+    "## 2. System Overview",
+    "## 3. Stakeholders and Design Concerns",
+    "## 4. Architecture Overview",
+    "## 5. Viewpoints and Views",
+    "## 6. Design Elements and Constraints",
+    "## 7. Traceability",
+    "## 8. Design Rationale",
+    "## 9. Risks and Mitigations",
+    "## 10. Summary",
+]
+
+CORE3_REQUIRED_HEADINGS = [
+    "### 5.1 Viewpoint-to-View Mapping",
+    "### 6.1 Design Element Catalog (Formal Definitions)",
 ]
 
 DEEP_EXTENSION_REQUIRED_HEADINGS = [
-    "## System Overview",
-    "## Data Design",
-    "## Component Design",
-    "## Human Interface Design",
-    "## Requirements Traceability Matrix",
-    "## Appendices",
-    "## Design Decisions (Locked)",
+    "## 11. Data Design",
+    "## 12. Component Design",
+    "## 13. Human Interface Design",
+    "## 14. Requirements Traceability Matrix",
+    "## 15. Appendices",
+    "## 16. Design Decisions (Locked)",
 ]
 
 GAP_REQUIRED_HEADINGS = [
@@ -142,8 +147,6 @@ def _run_heading_checks(
             f"{file_path} contains heading {heading!r} -> {present}",
         )
 
-    # Validate heading order: each required heading must appear later than the
-    # previous one in the extracted sequence.
     required_sequence = [_parse_heading(heading) for heading in required_headings]
     found_iter = iter(found_sequence)
     in_order = all(
@@ -216,10 +219,10 @@ def run_checks(
 
     if sdd_exists and mode != "review-only":
         _run_heading_checks(checks, "sdd", sdd_path, SDD_REQUIRED_HEADINGS)
+        _run_heading_checks(checks, "sdd-core3", sdd_path, CORE3_REQUIRED_HEADINGS)
         if profile == "implementation-deep":
             _run_heading_checks(checks, "sdd-deep", sdd_path, DEEP_EXTENSION_REQUIRED_HEADINGS)
-    # In draft-only mode the gap report is optional; if it exists, ignore it by default
-    # so stale files do not fail the run.
+
     if gap_exists and mode != "draft-only":
         _run_heading_checks(checks, "gap", gap_path, GAP_REQUIRED_HEADINGS)
 

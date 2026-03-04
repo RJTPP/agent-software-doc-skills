@@ -2,88 +2,86 @@
 
 ## Provenance
 
-This checklist is an independently authored practical reference inspired by the public structure and terminology of IEEE 1016-2009 for implementation use.
+This checklist is an independently authored practical reference inspired by IEEE 1016-2009 structure and terminology.
+It is non-verbatim and not a substitute for the official IEEE standard text.
+It is unofficial internal guidance.
 
-It is intentionally non-verbatim and not a substitute for the official IEEE standard text.
+Use this file for practical SDD drafting/review and internal completeness checks.
 
-Use this file for practical SDD drafting/review. It maps internal completeness checks to Clause 4 themes, Clause 5 viewpoint terminology, and Annex C-style structure guidance without reproducing IEEE text.
+## Required Base Structure
 
-## Core SDD Content Coverage (Mapped to Clause 4 Themes)
+An acceptable base SDD includes these headings in order:
 
-For each item, provide content or mark `N/A` with a reason.
+1. `## Document Control`
+2. `## 1. Introduction`
+3. `## 2. System Overview`
+4. `## 3. Stakeholders and Design Concerns`
+5. `## 4. Architecture Overview`
+6. `## 5. Viewpoints and Views`
+7. `## 6. Design Elements and Constraints`
+8. `## 7. Traceability`
+9. `## 8. Design Rationale`
+10. `## 9. Risks and Mitigations`
+11. `## 10. Summary`
 
-1. SDD identification
+## Core Formalization Checks (Required)
 
+1. Architecture overview present
+- Evidence: `## 4. Architecture Overview` includes logical + deployment/runtime depiction.
+
+2. Viewpoint-to-view mapping explicit
+- Evidence: `### 5.1 Viewpoint-to-View Mapping` maps each selected viewpoint to at least one view.
+
+3. Formal design element definitions present
+- Evidence: `### 6.1 Design Element Catalog (Formal Definitions)` includes fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`.
+
+## Content Coverage (Mapped to IEEE-Inspired Themes)
+
+For each item, provide content or mark `N/A` with rationale.
+
+1. SDD identification and governance
 - Date of issue and status
-- Scope
-- Issuing organization
-- Authorship
-- References
-- Context
-- Declared design languages by viewpoint
-- Body
-- Summary
-- Glossary
+- Scope and purpose
+- Issuing organization and authorship
+- References and glossary
 - Change history
 
 2. Stakeholders and concerns
-
 - Identified stakeholders
 - Identified concerns per stakeholder
-- Evidence that each concern is addressed
+- Evidence each critical concern is addressed
 
 3. Views and viewpoints
-
 - One or more design views
-- Exactly one governing viewpoint per view
-- Rationale for each selected viewpoint
+- Explicit viewpoint-to-view mapping
+- Rationale for selected and omitted viewpoints
 
 4. Design elements quality
-
 - Named and typed entities/relationships/constraints
-- Consistent naming and typing conventions
+- Formal element definitions for critical components
 
-5. Overlays and rationale
+5. Traceability and rationale
+- Concern/requirement to design mapping
+- Rationale documented for major decisions/tradeoffs
 
-- Overlays marked and linked to a base view if used
-- Design rationale documented for major decisions/tradeoffs
+6. Risk treatment
+- Major risks with likelihood/impact/mitigation/owner
 
-6. Design languages
+## Recommended Enhancements
 
-- Chosen notations have defined syntax/semantics
-- Standard or clearly defined notation references
+- Non-functional targets table in section `3.3`.
+- Runtime state vs persistent data vs configuration clarity in section `6.5`.
+- At least one architecture diagram and one runtime interaction/state diagram.
 
-## Viewpoint Catalog (Mapped to Clause 5 Terminology, Use When Applicable)
+## Implementation-Deep Extensions
 
-- Context
-- Composition
-- Logical
-- Dependency
-- Information
-- Patterns Use
-- Interface
-- Structure
-- Interaction
-- State Dynamics
-- Algorithm
-- Resources
+When `implementation-deep` profile is selected, also include:
 
-A viewpoint should be selected when it directly addresses identified design concerns. If not selected, provide `N/A` justification in the SDD.
+- `## 11. Data Design`
+- `## 12. Component Design`
+- `## 13. Human Interface Design`
+- `## 14. Requirements Traceability Matrix`
+- `## 15. Appendices`
+- `## 16. Design Decisions (Locked)`
 
-## Pragmatic Completeness Gate
-
-An SDD is acceptable when:
-
-1. Every critical concern maps to at least one view.
-2. Major architecture/interface/data decisions are explicit.
-3. Missing optional depth is acknowledged with rationale.
-4. The document is implementation-usable, not only descriptive.
-
-## Annex C-Inspired Document Shape (Informal Mapping)
-
-1. Front matter and identification
-2. Introduction (purpose/scope/context/references/glossary)
-3. Stakeholders and concerns
-4. Viewpoint declarations and design views
-5. Design rationale
-6. Summary and change history
+A deep-profile SDD is acceptable when base requirements pass and deep extensions are complete enough for handoff.
