@@ -40,7 +40,7 @@ To install all skills, use the following command:
 - Install with [skills](https://github.com/vercel-labs/skills) CLI (recommended):
 
 ```bash
-npx skills add . --skill '*'
+npx skills add https://github.com/RJTPP/agent-software-doc-skills --skill '*'
 ```
 
 - Install with **OpenAI Codex** via `$skill-installer` skill:
@@ -56,7 +56,7 @@ To install a specific skill, replace the `<SKILL_NAME>` in the following command
 - For Skills CLI:
 
 ```bash
-npx skills add . --skill <SKILL_NAME>
+npx skills add https://github.com/RJTPP/agent-software-doc-skills --skill <SKILL_NAME>
 ```
 
 - For OpenAI Codex:
@@ -70,7 +70,7 @@ $skill-installer install <SKILL_NAME> from RJTPP/agent-software-doc-skills
 - [`software-design-doc`](skills/software-design-doc/):
 
 ```bash
-npx skills add . --skill software-design-doc
+npx skills add https://github.com/RJTPP/agent-software-doc-skills --skill software-design-doc
 ```
 
 ## Future Plans
