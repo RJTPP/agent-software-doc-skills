@@ -151,6 +151,8 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Use section order from `references/sdd-template.md` (or deep template) as the canonical default.
 - Use original wording; do not quote or mirror copyrighted standards text.
 - Preserve required headings; reordering is allowed when it improves clarity for the project context.
+- Keep core architecture sections at the architectural abstraction level (layers/components/responsibilities), not file-by-file implementation listings.
+- Put concrete file/module paths in implementation-oriented sections (`12.*`, appendices, or traceability mappings) when needed.
 - Include Mermaid diagrams when they improve clarity.
 - Always include the core-3 formal artifacts:
   - `## 4. Architecture Overview`
