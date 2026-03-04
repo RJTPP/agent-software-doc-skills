@@ -1,13 +1,13 @@
 ---
 name: software-design-doc
-description: Draft, review, and update Software Design Documents using an IEEE 1016-2009-inspired structure with explicit architecture/views/elements formalization and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
+description: Draft, review, and update Software Design Descriptions using an IEEE 1016-2009-inspired structure with explicit architecture/views/elements formalization and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
 license: MIT
 metadata:
   author: RJTPP
   version: 0.3.0
 ---
 
-# Software Design Doc
+# Software Design Description
 
 Create or review an SDD using an IEEE 1016-inspired structure while staying pragmatic for project context.
 

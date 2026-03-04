@@ -1,4 +1,4 @@
-# Software Design Document
+# Software Design Description
 
 ## Document Control
 - What to include: document identity, ownership, lifecycle status, and revision metadata.

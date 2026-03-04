@@ -18,7 +18,7 @@
 
 | Skill | Description |
 | ----- | ----------- |
-| [software-design-doc](skills/software-design-doc) | Draft, review, and update **Software Design Documents (SDD)** with an **IEEE 1016-2009-inspired** pragmatic structure.† |
+| [software-design-doc](skills/software-design-doc) | Draft, review, and update **Software Design Descriptions (SDD)** with an **IEEE 1016-2009-inspired** pragmatic structure.† |
 
 † See [Standards and Copyright Notice](#standards-and-copyright-notice).
 
