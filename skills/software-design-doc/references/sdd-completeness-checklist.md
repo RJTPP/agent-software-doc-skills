@@ -33,7 +33,7 @@ An acceptable base SDD includes these headings (template order is the default re
 - Evidence: `### 5.1 Viewpoint-to-View Mapping` maps each selected viewpoint to at least one view.
 
 3. Formal design element definitions present
-- Evidence: `### 6.1 Design Element Catalog (Formal Definitions)` includes fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`.
+- Evidence: `### 6.1 Design Element Catalog (Formal Definitions)` includes fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`, `Public Functions`.
 
 ## Content Coverage (Mapped to IEEE-Inspired Themes)
 
@@ -70,7 +70,9 @@ For each item, provide content or mark `N/A` with rationale.
 ## Recommended Enhancements
 
 - Non-functional targets table in section `3.3`.
+- Quality-attribute scenario for critical concerns using `Stimulus`, `Environment`, `Response`, `Measurement`.
 - Runtime state vs persistent data vs configuration clarity in section `6.5`.
+- Short future-evolution note when persistent data is currently absent/static.
 - At least one architecture diagram and one runtime interaction/state diagram.
 
 ## Implementation-Deep Extensions

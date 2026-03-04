@@ -100,6 +100,22 @@ DEEP_SUBSECTION_REQUIRED_HEADINGS = [
     "### 16.2 Deferred Decisions",
 ]
 
+INTERFACE_FIELD_PATTERNS = [
+    r"(?i)\bComponent\s*:",
+    r"(?i)\bResponsibility\s*:",
+    r"(?i)\bInputs\s*:",
+    r"(?i)\bOutputs\s*:",
+    r"(?i)\bDependencies\s*:",
+    r"(?i)\bPublic Functions?\s*:",
+]
+
+QUALITY_SCENARIO_FIELD_PATTERNS = [
+    r"(?i)\bStimulus\s*:",
+    r"(?i)\bEnvironment\s*:",
+    r"(?i)\bResponse\s*:",
+    r"(?i)\bMeasurement\s*:",
+]
+
 GAP_REQUIRED_HEADINGS = [
     "# SDD Gap Report",
     "## Scope and Inputs",
@@ -227,6 +243,36 @@ def _run_heading_checks(
         )
 
 
+def _run_pattern_checks(
+    checks: list[dict[str, Any]],
+    check_prefix: str,
+    file_path: Path,
+    patterns: list[str],
+) -> None:
+    try:
+        text = file_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        _add_check(
+            checks,
+            f"{check_prefix}-readable",
+            False,
+            "hard",
+            f"Could not read {file_path}: {exc}",
+        )
+        return
+
+    for pattern in patterns:
+        present = re.search(pattern, text) is not None
+        label = re.sub(r"[^a-z0-9]+", "-", pattern.lower()).strip("-")
+        _add_check(
+            checks,
+            f"{check_prefix}-pattern-{label}",
+            present,
+            "soft",
+            f"{file_path} contains pattern {pattern!r} -> {present}",
+        )
+
+
 def run_checks(
     mode: str,
     docs_dir: Path,
@@ -287,6 +333,8 @@ def run_checks(
         _run_heading_checks(checks, "sdd-core3", sdd_path, CORE3_REQUIRED_HEADINGS)
         if require_all_subsections:
             _run_heading_checks(checks, "sdd-subsections", sdd_path, BASE_SUBSECTION_REQUIRED_HEADINGS)
+            _run_pattern_checks(checks, "sdd-interface-fields", sdd_path, INTERFACE_FIELD_PATTERNS)
+            _run_pattern_checks(checks, "sdd-quality-scenario", sdd_path, QUALITY_SCENARIO_FIELD_PATTERNS)
         if profile == "implementation-deep":
             _run_heading_checks(checks, "sdd-deep", sdd_path, DEEP_EXTENSION_REQUIRED_HEADINGS)
             if require_all_subsections:
