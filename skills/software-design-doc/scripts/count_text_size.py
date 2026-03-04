@@ -173,10 +173,12 @@ def _totals(rows: list[dict[str, Any]]) -> dict[str, int]:
 def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
     file_width = max(20, max((len(row["file"]) for row in rows), default=4))
     totals = _totals(rows)
+    header_line = FILE_FMT.format("file", "chars", "words", "lines", "md", "status", "error", file_w=file_width)
+    divider_line = "-" * len(header_line)
 
     lines = [
-        FILE_FMT.format("file", "chars", "words", "lines", "md", "status", "error", file_w=file_width),
-        "-" * (file_width + 42),
+        header_line,
+        divider_line,
     ]
     for row in rows:
         lines.append(
@@ -205,7 +207,7 @@ def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
                         section["section_lines"],
                     )
                 )
-    lines.append("-" * (file_width + 42))
+    lines.append(divider_line)
     lines.append(
         FILE_FMT.format(
             "TOTAL",
