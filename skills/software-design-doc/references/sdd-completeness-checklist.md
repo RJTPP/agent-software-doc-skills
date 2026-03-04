@@ -5,7 +5,6 @@
 This checklist is an independently authored practical reference inspired by the public structure and terminology of IEEE 1016-2009 for implementation use.
 
 It is intentionally non-verbatim and not a substitute for the official IEEE standard text.
-It is unofficial and not endorsed by IEEE or IEEE Standards Association.
 
 Use this file for practical SDD drafting/review. It maps internal completeness checks to Clause 4 themes, Clause 5 viewpoint terminology, and Annex C-style structure guidance without reproducing IEEE text.
 
