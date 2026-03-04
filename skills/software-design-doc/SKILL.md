@@ -168,6 +168,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Check coverage against core IEEE-inspired structure themes without reproducing standard text.
 - Check concern-to-view coverage and missing decisions.
 - Ensure architecture/viewpoint/element formalization is explicit and reviewable.
+- Check consistency of terminology, component names, version references, and cited artifacts across the document.
 - Allow justified simplification for project scale.
 
 6. Write outputs
@@ -227,6 +228,7 @@ Use these headings in order:
 - Architecture overview is explicit and includes logical plus deployment/runtime depiction.
 - Viewpoint choices are explicit with viewpoint-to-view mapping.
 - Design elements are formally defined with component fields.
+- Terminology, component names, and version/references are internally consistent across sections.
 - Gap report recommendations are actionable and prioritized.
 - No machine-specific assumptions or absolute local-only dependencies in document content.
 
