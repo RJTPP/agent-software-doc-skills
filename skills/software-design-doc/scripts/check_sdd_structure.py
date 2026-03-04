@@ -29,6 +29,43 @@ CORE3_REQUIRED_HEADINGS = [
     "### 6.1 Design Element Catalog (Formal Definitions)",
 ]
 
+BASE_SUBSECTION_REQUIRED_HEADINGS = [
+    "### 1.1 Purpose",
+    "### 1.2 Scope",
+    "### 1.3 Context",
+    "### 1.4 Intended Audience",
+    "### 1.5 References",
+    "### 1.6 Glossary",
+    "### 2.1 Product and Runtime Context",
+    "### 2.2 External Systems and Integrations",
+    "### 2.3 Operating Constraints",
+    "### 3.1 Stakeholder List",
+    "### 3.2 Concern Catalog",
+    "### 3.3 Non-Functional Targets (Recommended)",
+    "### 4.1 Logical Architecture",
+    "### 4.2 Deployment and Runtime Topology",
+    "### 4.3 Critical Flow Summary",
+    "### 5.1 Viewpoint-to-View Mapping",
+    "### 5.2 Context View",
+    "### 5.3 Composition View",
+    "### 5.4 Logical View",
+    "### 5.5 Dependency View",
+    "### 5.6 Information View",
+    "### 5.7 Interface View",
+    "### 5.8 Interaction / State / Algorithm Views (as applicable)",
+    "### 5.9 Resource View (as applicable)",
+    "### 6.1 Design Element Catalog (Formal Definitions)",
+    "### 6.2 Interfaces and Data Structures",
+    "### 6.3 Relationships",
+    "### 6.4 Constraints and Assumptions",
+    "### 6.5 Runtime State and Data Notes (Recommended)",
+    "### 7.1 Requirement/Concern to Design Mapping",
+    "### 7.2 Coverage and Gaps",
+    "### 8.1 Key Decisions",
+    "### 8.2 Alternatives Considered",
+    "### 8.3 Tradeoff Analysis",
+]
+
 DEEP_EXTENSION_REQUIRED_HEADINGS = [
     "## 11. Data Design",
     "## 12. Component Design",
@@ -36,6 +73,31 @@ DEEP_EXTENSION_REQUIRED_HEADINGS = [
     "## 14. Requirements Traceability Matrix",
     "## 15. Appendices",
     "## 16. Design Decisions (Locked)",
+]
+
+DEEP_SUBSECTION_REQUIRED_HEADINGS = [
+    "### 11.1 ERD Summary",
+    "### 11.2 Data Description",
+    "### 11.3 Data Dictionary",
+    "### 11.4 Client-side Cache/Storage Model",
+    "### 12.1 Subsystem Responsibilities",
+    "### 12.2 Internal Interfaces",
+    "### 12.3 Public/Private API Surface",
+    "### 12.4 Failure Handling and Retries",
+    "### 13.1 UX Flow Summary",
+    "### 13.2 Key Screens/Wireframes",
+    "### 13.3 Interaction Constraints",
+    "### 14.1 Requirement to Design Mapping Table",
+    "### 14.2 Coverage Status and Open Items",
+    "### 15.1 Sequence Flows",
+    "### 15.2 State Models",
+    "### 15.3 Configuration Matrix",
+    "### 15.4 Cache Policy",
+    "### 15.5 Security and Privacy Notes",
+    "### 15.6 Testing Strategy",
+    "### 15.7 Risk Register",
+    "### 16.1 Architectural Decisions and Rationale",
+    "### 16.2 Deferred Decisions",
 ]
 
 GAP_REQUIRED_HEADINGS = [
@@ -170,6 +232,7 @@ def run_checks(
     docs_dir: Path,
     allow_input_sdd: bool = False,
     profile: str = "ieee-pragmatic",
+    require_all_subsections: bool = False,
 ) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
 
@@ -222,8 +285,12 @@ def run_checks(
     if sdd_exists and mode != "review-only":
         _run_heading_checks(checks, "sdd", sdd_path, SDD_REQUIRED_HEADINGS)
         _run_heading_checks(checks, "sdd-core3", sdd_path, CORE3_REQUIRED_HEADINGS)
+        if require_all_subsections:
+            _run_heading_checks(checks, "sdd-subsections", sdd_path, BASE_SUBSECTION_REQUIRED_HEADINGS)
         if profile == "implementation-deep":
             _run_heading_checks(checks, "sdd-deep", sdd_path, DEEP_EXTENSION_REQUIRED_HEADINGS)
+            if require_all_subsections:
+                _run_heading_checks(checks, "sdd-deep-subsections", sdd_path, DEEP_SUBSECTION_REQUIRED_HEADINGS)
 
     if gap_exists and mode != "draft-only":
         _run_heading_checks(checks, "gap", gap_path, GAP_REQUIRED_HEADINGS)
@@ -270,6 +337,11 @@ def main() -> int:
         action="store_true",
         help="In review-only mode, allow SDD.md to exist as colocated input.",
     )
+    parser.add_argument(
+        "--require-all-subsections",
+        action="store_true",
+        help="Require all template subsections (base; and deep subsections when profile is implementation-deep).",
+    )
     args = parser.parse_args()
 
     result = run_checks(
@@ -277,6 +349,7 @@ def main() -> int:
         Path(args.docs_dir).resolve(),
         allow_input_sdd=args.allow_input_sdd,
         profile=args.profile,
+        require_all_subsections=args.require_all_subsections,
     )
     checks = result["checks"]
     hard_fail_count = sum(1 for c in checks if c["severity"] == "hard" and not c["passed"])
@@ -288,6 +361,7 @@ def main() -> int:
     result["strict_sections"] = strict_sections
     result["allow_soft_sections"] = args.allow_soft_sections
     result["allow_input_sdd"] = args.allow_input_sdd
+    result["require_all_subsections"] = args.require_all_subsections
     result["passed"] = passed
 
     for check in checks:
