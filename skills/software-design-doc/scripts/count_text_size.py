@@ -160,8 +160,19 @@ def _analyze_stdin(by_heading: bool) -> dict[str, Any]:
     return row
 
 
+def _totals(rows: list[dict[str, Any]]) -> dict[str, int]:
+    return {
+        "chars": sum(row["chars"] for row in rows),
+        "words": sum(row["words"] for row in rows),
+        "lines": sum(row["lines"] for row in rows),
+        "files": len(rows),
+        "errors": sum(1 for row in rows if row["status"] == "error"),
+    }
+
+
 def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
     file_width = max(20, max((len(row["file"]) for row in rows), default=4))
+    totals = _totals(rows)
 
     lines = [
         FILE_FMT.format("file", "chars", "words", "lines", "md", "status", "error", file_w=file_width),
@@ -194,6 +205,19 @@ def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
                         section["section_lines"],
                     )
                 )
+    lines.append("-" * (file_width + 42))
+    lines.append(
+        FILE_FMT.format(
+            "TOTAL",
+            totals["chars"],
+            totals["words"],
+            totals["lines"],
+            "-",
+            "mixed" if totals["errors"] else "ok",
+            f"files={totals['files']} errors={totals['errors']}",
+            file_w=file_width,
+        )
+    )
     return "\n".join(lines)
 
 
@@ -282,6 +306,7 @@ def main() -> int:
     has_error = any(row["status"] == "error" for row in rows)
 
     payload: str
+    totals = _totals(rows)
     if args.format == "json":
         json_rows: list[dict[str, Any]] = []
         for row in rows:
@@ -297,7 +322,7 @@ def main() -> int:
             if args.by_heading and row["sections"]:
                 item["sections"] = row["sections"]
             json_rows.append(item)
-        payload = json.dumps({"version": SCRIPT_VERSION, "files": json_rows}, indent=2)
+        payload = json.dumps({"version": SCRIPT_VERSION, "totals": totals, "files": json_rows}, indent=2)
     else:
         payload = _to_table(rows, args.by_heading)
 
