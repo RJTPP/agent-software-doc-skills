@@ -4,7 +4,7 @@ description: Draft, review, and update Software Design Descriptions using an IEE
 license: MIT
 metadata:
   author: RJTPP
-  version: 0.3.2
+  version: 0.3.3
 ---
 
 # Software Design Description
@@ -156,8 +156,10 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
   - `## 4. Architecture Overview`
   - `### 5.1 Viewpoint-to-View Mapping`
   - `### 6.1 Design Element Catalog (Formal Definitions)` with fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`, `Public Functions`
-- For quality-driven concerns, include at least one scenario using: `Stimulus`, `Environment`, `Response`, `Measurement`.
-- In `6.5` and/or `11.x`, include a short future-evolution note when persistent data is currently absent (for example CMS/DB migration path).
+- Optional enhancements:
+  - Include quality-attribute scenarios using `Stimulus`, `Environment`, `Response`, `Measurement` when quality concerns are material.
+  - Include a short future-evolution note in `6.5` and/or `11.x` when persistent data is currently absent/static.
+  - If optional enhancements are omitted, add a concise `N/A rationale`.
 - If detail profile is `implementation-deep`, include extension sections:
   - `## 11. Data Design`
   - `## 12. Component Design`
@@ -221,6 +223,8 @@ Use these headings in order:
 ## Pragmatic Completeness Rules
 
 - Treat mapped core content areas as required unless genuinely out of scope.
+- Treat core architecture/view/element formalization (`4`, `5.1`, `6.1` with formal fields) as required.
+- Treat quality scenarios and future-evolution notes as recommended enhancements; allow omission with concise `N/A rationale`.
 - If an item is omitted, provide a short `N/A rationale`.
 - Favor correctness and implementability over ceremonial detail.
 - Keep terminology consistent with the project domain.
