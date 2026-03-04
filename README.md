@@ -9,6 +9,7 @@
   - [Available Skills](#available-skills)
   - [Standards and Copyright Notice](#standards-and-copyright-notice)
   - [Quick Start](#quick-start)
+  - [Text Size Utility](#text-size-utility)
   - [Install Specific Skill](#install-specific-skill)
     - [Copy-Paste Installation](#copy-paste-installation)
   - [Future Plans](#future-plans)
@@ -47,6 +48,32 @@ npx skills add https://github.com/RJTPP/agent-software-doc-skills --skill '*'
 
 ```md
 $skill-installer install all skills from RJTPP/agent-software-doc-skills
+```
+
+## Text Size Utility
+
+Use the text-size utility to quickly check document size before drafting/review workflows:
+
+```bash
+python3 scripts/count_text_size.py README.md
+python3 scripts/count_text_size.py skills/software-design-doc/SKILL.md --by-heading
+python3 scripts/count_text_size.py --version
+```
+
+This script is intentionally duplicated for skill-local usage:
+
+```bash
+python3 skills/software-design-doc/scripts/count_text_size.py README.md --by-heading
+```
+
+Maintenance note for duplicated script:
+
+- Keep `scripts/count_text_size.py` and `skills/software-design-doc/scripts/count_text_size.py` synchronized.
+- When either copy changes, update header fields `Version` and `Synced-On` in both files.
+- Verify synchronization during review:
+
+```bash
+shasum scripts/count_text_size.py skills/software-design-doc/scripts/count_text_size.py
 ```
 
 ## Install Specific Skill
