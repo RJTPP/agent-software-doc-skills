@@ -20,12 +20,14 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
 - Use [references/quality-attribute-scenarios.md](references/quality-attribute-scenarios.md) for quality-attribute scenario patterns.
 - Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required headings and core formalization sections.
+- Use [scripts/count_text_size.py](scripts/count_text_size.py) to inspect file size quickly (`chars`, `words`, `lines`) and optional Markdown heading breakdown (`--by-heading`).
 
 Mandatory preflight sequence:
 
 1. Read available context first (PRD/SDD/repo docs relevant to the request).
-2. Recommend mode, detail profile, and interaction option from that context.
-3. Ask for user confirmation before drafting.
+2. Optionally run a size check for large docs: `python3 scripts/count_text_size.py SKILL.md --by-heading`.
+3. Recommend mode, detail profile, and interaction option from that context.
+4. Ask for user confirmation before drafting.
 
 Do not start drafting until preflight confirmation is received, unless user explicitly uses `/fast` or `/assume`.
 
