@@ -1,6 +1,4 @@
-# Software Design Document (IEEE 1016-Inspired + Implementation-Deep Template, Unofficial)
-
-> Note: This is an independently authored template inspired by IEEE 1016-2009 concepts. Use original wording; do not copy standard text.
+# Software Design Document
 
 ## Document Control
 - What to include: document identity, ownership, lifecycle status, and revision metadata.
