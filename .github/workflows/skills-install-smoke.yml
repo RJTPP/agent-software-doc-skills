@@ -1,0 +1,39 @@
+name: Skills Install Smoke Test
+
+env:
+  SKILLS_REPO: https://github.com/${{ github.repository }}
+
+on:
+  pull_request:
+    paths:
+      - "skills/**"
+      - "README.md"
+      - ".github/workflows/skills-install-smoke.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "skills/**"
+      - "README.md"
+
+jobs:
+  smoke-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: List skills from repository
+        run: |
+          npx -y skills add "$SKILLS_REPO" --list
+
+      - name: Install all skills (smoke test)
+        run: |
+          npx -y skills add "$SKILLS_REPO" --skill '*'
