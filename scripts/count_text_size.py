@@ -222,11 +222,27 @@ def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
 
 
 def _resolve_inputs(paths: list[str], globs: list[str]) -> list[str]:
-    resolved: list[str] = list(paths)
+    resolved: list[str] = []
+    seen: set[str] = set()
+
+    for path in paths:
+        if path == "-":
+            # Keep repeated stdin markers so downstream logic can emit an explicit error row.
+            resolved.append(path)
+            continue
+        if path not in seen:
+            resolved.append(path)
+            seen.add(path)
 
     for pattern in globs:
         for match in sorted(glob(pattern, recursive=True)):
-            resolved.append(match)
+            if match == "-":
+                # Defensive only; glob results should not produce '-'.
+                resolved.append(match)
+                continue
+            if match not in seen:
+                resolved.append(match)
+                seen.add(match)
 
     return resolved
 
