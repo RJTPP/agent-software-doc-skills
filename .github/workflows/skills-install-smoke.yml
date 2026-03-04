@@ -2,6 +2,7 @@ name: Skills Install Smoke Test
 
 env:
   SKILLS_SOURCE: .
+  SKILLS_REPO: https://github.com/${{ github.repository }}
 
 on:
   pull_request:
@@ -40,3 +41,9 @@ jobs:
       - name: Install all skills (smoke test)
         run: |
           npx -y skills add "$SKILLS_SOURCE" --skill '*'
+
+      - name: Install all skills from GitHub (post-merge cloud check)
+        if: github.event_name == 'push'
+        run: |
+          npx -y skills add "$SKILLS_REPO" --list
+          npx -y skills add "$SKILLS_REPO" --skill '*'
