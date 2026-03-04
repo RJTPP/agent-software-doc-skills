@@ -25,7 +25,7 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 Mandatory preflight sequence:
 
 1. Read available context first (PRD/SDD/repo docs relevant to the request).
-2. Optionally run a size check for large docs: `python3 scripts/count_text_size.py SKILL.md --by-heading`.
+2. Optionally run a size check for large docs: `python3 scripts/count_text_size.py <path> --by-heading` or scan all docs: `python3 scripts/count_text_size.py --glob "**/*.md"`.
 3. Recommend mode, detail profile, and interaction option from that context.
 4. Ask for user confirmation before drafting.
 
@@ -190,8 +190,8 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 7. Validate generated outputs
 
- - Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only> --docs-dir <output-dir> --profile <ieee-pragmatic|implementation-deep>`.
- - For evals/CI strictness, run with `--require-all-subsections`.
+- Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only> --docs-dir <output-dir> --profile <ieee-pragmatic|implementation-deep>`.
+- For evals/CI strictness, run with `--require-all-subsections`.
 - Section completeness is strict by default; use `--allow-soft-sections` only when section checks should be advisory.
 - In `review-only`, use `--allow-input-sdd` if source SDD is colocated with generated gap report.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
