@@ -10,7 +10,7 @@ Use this file for practical SDD drafting/review and internal completeness checks
 
 ## Required Base Structure
 
-An acceptable base SDD includes these headings in order:
+An acceptable base SDD includes these headings (template order is the default recommendation):
 
 1. `## Document Control`
 2. `## 1. Introduction`

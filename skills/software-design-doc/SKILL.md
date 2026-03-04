@@ -1,6 +1,6 @@
 ---
 name: software-design-doc
-description: Draft, review, and update Software Design Documents using an IEEE 1016-2009-inspired structure with strict section ordering, explicit architecture/views/elements formalization, and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
+description: Draft, review, and update Software Design Documents using an IEEE 1016-2009-inspired structure with explicit architecture/views/elements formalization and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
 license: MIT
 metadata:
   author: RJTPP
@@ -18,7 +18,7 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [references/sdd-template-implementation-deep.md](references/sdd-template-implementation-deep.md) when detail profile is `implementation-deep`.
 - Use [references/viewpoint-mapping.md](references/viewpoint-mapping.md) to choose viewpoints and map them to concrete views.
 - Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
-- Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required headings and ordering.
+- Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required headings and core formalization sections.
 
 Mandatory preflight sequence:
 
@@ -147,9 +147,9 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 4. Draft or update SDD
 
-- Follow section order from `references/sdd-template.md` (or deep template when applicable).
+- Use section order from `references/sdd-template.md` (or deep template) as the canonical default.
 - Use original wording; do not quote or mirror copyrighted standards text.
-- Preserve required headings and ordering.
+- Preserve required headings; reordering is allowed when it improves clarity for the project context.
 - Include Mermaid diagrams when they improve clarity.
 - Always include the core-3 formal artifacts:
   - `## 4. Architecture Overview`
@@ -185,9 +185,9 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - In `review-only`, use `--allow-input-sdd` if source SDD is colocated with generated gap report.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
 
-## Required Base Section Order
+## Canonical Base Section Set (Template Order)
 
-Use these headings in this exact order:
+Use these headings as the default template sequence:
 
 1. `## Document Control`
 2. `## 1. Introduction`

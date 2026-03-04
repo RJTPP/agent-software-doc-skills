@@ -121,6 +121,7 @@ def _run_heading_checks(
     check_prefix: str,
     file_path: Path,
     required_headings: list[str],
+    enforce_order: bool = False,
 ) -> None:
     try:
         text = file_path.read_text(encoding="utf-8")
@@ -147,20 +148,21 @@ def _run_heading_checks(
             f"{file_path} contains heading {heading!r} -> {present}",
         )
 
-    required_sequence = [_parse_heading(heading) for heading in required_headings]
-    found_iter = iter(found_sequence)
-    in_order = all(
-        any(found_heading == required_heading for found_heading in found_iter)
-        for required_heading in required_sequence
-    )
+    if enforce_order:
+        required_sequence = [_parse_heading(heading) for heading in required_headings]
+        found_iter = iter(found_sequence)
+        in_order = all(
+            any(found_heading == required_heading for found_heading in found_iter)
+            for required_heading in required_sequence
+        )
 
-    _add_check(
-        checks,
-        f"{check_prefix}-heading-order",
-        in_order,
-        "soft",
-        f"{file_path} required headings appear in expected order -> {in_order}",
-    )
+        _add_check(
+            checks,
+            f"{check_prefix}-heading-order",
+            in_order,
+            "soft",
+            f"{file_path} required headings appear in expected order -> {in_order}",
+        )
 
 
 def run_checks(
