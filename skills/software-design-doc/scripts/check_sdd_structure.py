@@ -101,19 +101,19 @@ DEEP_SUBSECTION_REQUIRED_HEADINGS = [
 ]
 
 INTERFACE_FIELD_PATTERNS = [
-    r"(?i)\bComponent\s*:",
-    r"(?i)\bResponsibility\s*:",
-    r"(?i)\bInputs\s*:",
-    r"(?i)\bOutputs\s*:",
-    r"(?i)\bDependencies\s*:",
-    r"(?i)\bPublic Functions?\s*:",
+    ("component", r"(?i)\bComponent\s*:"),
+    ("responsibility", r"(?i)\bResponsibility\s*:"),
+    ("inputs", r"(?i)\bInputs\s*:"),
+    ("outputs", r"(?i)\bOutputs\s*:"),
+    ("dependencies", r"(?i)\bDependencies\s*:"),
+    ("public-functions", r"(?i)\bPublic Functions?\s*:"),
 ]
 
 QUALITY_SCENARIO_FIELD_PATTERNS = [
-    r"(?i)\bStimulus\s*:",
-    r"(?i)\bEnvironment\s*:",
-    r"(?i)\bResponse\s*:",
-    r"(?i)\bMeasurement\s*:",
+    ("stimulus", r"(?i)\bStimulus\s*:"),
+    ("environment", r"(?i)\bEnvironment\s*:"),
+    ("response", r"(?i)\bResponse\s*:"),
+    ("measurement", r"(?i)\bMeasurement\s*:"),
 ]
 
 GAP_REQUIRED_HEADINGS = [
@@ -247,7 +247,7 @@ def _run_pattern_checks(
     checks: list[dict[str, Any]],
     check_prefix: str,
     file_path: Path,
-    patterns: list[str],
+    patterns: list[tuple[str, str]],
 ) -> None:
     try:
         text = file_path.read_text(encoding="utf-8")
@@ -261,9 +261,8 @@ def _run_pattern_checks(
         )
         return
 
-    for pattern in patterns:
+    for label, pattern in patterns:
         present = re.search(pattern, text) is not None
-        label = re.sub(r"[^a-z0-9]+", "-", pattern.lower()).strip("-")
         _add_check(
             checks,
             f"{check_prefix}-pattern-{label}",
