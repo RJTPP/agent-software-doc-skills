@@ -1,20 +1,16 @@
 name: Skills Install Smoke Test
 
 env:
-  SKILLS_REPO: https://github.com/${{ github.repository }}
+  SKILLS_SOURCE: .
 
 on:
-  pull_request:
-    paths:
-      - "skills/**"
-      - "README.md"
-      - ".github/workflows/skills-install-smoke.yml"
   push:
     branches:
       - main
     paths:
       - "skills/**"
       - "README.md"
+      - ".github/workflows/skills-install-smoke.yml"
 
 jobs:
   smoke-install:
@@ -32,8 +28,8 @@ jobs:
 
       - name: List skills from repository
         run: |
-          npx -y skills add "$SKILLS_REPO" --list
+          npx -y skills add "$SKILLS_SOURCE" --list
 
       - name: Install all skills (smoke test)
         run: |
-          npx -y skills add "$SKILLS_REPO" --skill '*'
+          npx -y skills add "$SKILLS_SOURCE" --skill '*'
