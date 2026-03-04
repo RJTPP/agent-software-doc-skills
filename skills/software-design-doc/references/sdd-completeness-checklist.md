@@ -55,6 +55,7 @@ For each item, provide content or mark `N/A` with rationale.
 - One or more design views
 - Explicit viewpoint-to-view mapping
 - Rationale for selected and omitted viewpoints
+- View descriptions use architectural/component language (file-level mappings deferred to implementation sections/appendices)
 
 4. Design elements quality
 - Named and typed entities/relationships/constraints

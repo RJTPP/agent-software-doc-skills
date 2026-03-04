@@ -102,8 +102,9 @@
 - Minimum evidence: boundary diagram or equivalent structured description.
 
 ### 5.3 Composition View
-- What to include: major subsystems/components and ownership boundaries.
-- Minimum evidence: decomposition with responsibilities per component.
+- What to include: major subsystems/components, layers, and ownership boundaries at architectural level.
+- Minimum evidence: decomposition with responsibilities per component (avoid raw file-by-file listings in this section).
+- Optional detail: map components to concrete file/module paths in implementation sections or appendices.
 
 ### 5.4 Logical View
 - What to include: domain model/types and key invariants.
@@ -223,8 +224,9 @@
 - Minimum evidence: each component has responsibility, contract, and failure behavior.
 
 ### 12.1 Subsystem Responsibilities
-- What to include: component-level responsibilities and dependencies.
+- What to include: component-level responsibilities, dependencies, and implementation mapping as needed.
 - Minimum evidence: no major overlap/ambiguity in ownership.
+- Allowed detail: concrete file/module paths may be listed here to map architecture to implementation.
 
 ### 12.2 Internal Interfaces
 - What to include: internal contracts, payloads, and lifecycle assumptions.

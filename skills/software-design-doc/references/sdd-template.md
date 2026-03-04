@@ -102,8 +102,9 @@
 - Minimum evidence: boundary diagram or equivalent structured description.
 
 ### 5.3 Composition View
-- What to include: major subsystems/components and ownership boundaries.
-- Minimum evidence: decomposition with responsibilities per component.
+- What to include: major subsystems/components, layers, and ownership boundaries at architectural level.
+- Minimum evidence: decomposition with responsibilities per component (avoid raw file-by-file listings in this section).
+- Optional detail: map components to concrete file/module paths in implementation sections or appendices.
 
 ### 5.4 Logical View
 - What to include: domain model/types and key invariants.
