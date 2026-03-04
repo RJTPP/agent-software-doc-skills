@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copy Reference: count_text_size.py
-# Version: 1.1.0
+# Version: 1.2.0
 # Synced-On: 2026-03-04
 # NOTE: This file is intentionally duplicated in:
 # - scripts/count_text_size.py
@@ -10,16 +10,18 @@
 from __future__ import annotations
 
 import argparse
+from glob import glob
 import json
 from pathlib import Path
 import re
 import sys
 from typing import Any
 
-SCRIPT_VERSION = "1.1.0"
+SCRIPT_VERSION = "1.2.0"
 WORD_RE = re.compile(r"\S+")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 FENCE_RE = re.compile(r"^(```+|~~~+)")
+FILE_FMT = "{:<{file_w}} {:>8} {:>8} {:>8} {:>7} {:<8} {}"
 
 
 def _count_text(text: str) -> dict[str, int]:
@@ -140,19 +142,34 @@ def _analyze_path(path: Path, encoding: str, by_heading: bool) -> dict[str, Any]
     return row
 
 
+def _analyze_stdin(by_heading: bool) -> dict[str, Any]:
+    text = sys.stdin.read()
+    counts = _count_text(text)
+    row: dict[str, Any] = {
+        "file": "-",
+        "chars": counts["chars"],
+        "words": counts["words"],
+        "lines": counts["lines"],
+        "is_markdown": by_heading,
+        "status": "ok",
+        "error": None,
+        "sections": [],
+    }
+    if by_heading:
+        row["sections"] = _markdown_sections(text)
+    return row
+
+
 def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
-    file_header = "{:<55} {:>8} {:>8} {:>8} {:>7} {:<8} {}"
-    file_row_fmt = "{:<55} {:>8} {:>8} {:>8} {:>7} {:<8} {}"
-    section_row_fmt = "  {:<52} {:>8} {:>8} {:>8}"
-    section_header = "  {:<52} {:>8} {:>8} {:>8}"
+    file_width = max(20, max((len(row["file"]) for row in rows), default=4))
 
     lines = [
-        file_header.format("file", "chars", "words", "lines", "md", "status", "error"),
-        "-" * 110,
+        FILE_FMT.format("file", "chars", "words", "lines", "md", "status", "error", file_w=file_width),
+        "-" * (file_width + 42),
     ]
     for row in rows:
         lines.append(
-            file_row_fmt.format(
+            FILE_FMT.format(
                 row["file"],
                 row["chars"],
                 row["words"],
@@ -160,15 +177,18 @@ def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
                 "yes" if row["is_markdown"] else "no",
                 row["status"],
                 row["error"] or "",
+                file_w=file_width,
             )
         )
         if by_heading and row["sections"]:
-            lines.append(section_header.format("heading", "chars", "words", "lines"))
+            heading_width = max(20, max((len(f"h{s['heading_level']}: {s['heading_text']}") for s in row["sections"]), default=7))
+            section_fmt = f"  {{:<{heading_width}}} {{:>8}} {{:>8}} {{:>8}}"
+            lines.append(section_fmt.format("heading", "chars", "words", "lines"))
             for section in row["sections"]:
                 heading_label = f"h{section['heading_level']}: {section['heading_text']}"
                 lines.append(
-                    section_row_fmt.format(
-                        heading_label[:52],
+                    section_fmt.format(
+                        heading_label,
                         section["section_chars"],
                         section["section_words"],
                         section["section_lines"],
@@ -177,11 +197,27 @@ def _to_table(rows: list[dict[str, Any]], by_heading: bool) -> str:
     return "\n".join(lines)
 
 
+def _resolve_inputs(paths: list[str], globs: list[str]) -> list[str]:
+    resolved: list[str] = list(paths)
+
+    for pattern in globs:
+        for match in sorted(glob(pattern, recursive=True)):
+            resolved.append(match)
+
+    return resolved
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Count file chars/words/lines with optional Markdown heading breakdown."
     )
-    parser.add_argument("paths", nargs="*", help="One or more file paths.")
+    parser.add_argument("paths", nargs="*", help="One or more file paths. Use '-' to read from stdin.")
+    parser.add_argument(
+        "--glob",
+        action="append",
+        default=[],
+        help="Glob pattern to expand as input files. Repeat flag for multiple patterns.",
+    )
     parser.add_argument(
         "--by-heading",
         action="store_true",
@@ -215,11 +251,34 @@ def main() -> int:
         print(f"count_text_size.py {SCRIPT_VERSION}")
         return 0
 
-    if not args.paths:
-        print("count_text_size.py: error: the following arguments are required: paths", file=sys.stderr)
+    inputs = _resolve_inputs(args.paths, args.glob)
+    if not inputs:
+        print("count_text_size.py: error: provide at least one path, '-', or --glob pattern", file=sys.stderr)
         return 1
 
-    rows = [_analyze_path(Path(path), args.encoding, args.by_heading) for path in args.paths]
+    rows: list[dict[str, Any]] = []
+    stdin_consumed = False
+    for raw in inputs:
+        if raw == "-":
+            if stdin_consumed:
+                rows.append(
+                    {
+                        "file": "-",
+                        "chars": 0,
+                        "words": 0,
+                        "lines": 0,
+                        "is_markdown": args.by_heading,
+                        "status": "error",
+                        "error": "stdin already consumed; use '-' only once.",
+                        "sections": [],
+                    }
+                )
+                continue
+            rows.append(_analyze_stdin(args.by_heading))
+            stdin_consumed = True
+            continue
+        rows.append(_analyze_path(Path(raw), args.encoding, args.by_heading))
+
     has_error = any(row["status"] == "error" for row in rows)
 
     payload: str

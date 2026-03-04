@@ -12,6 +12,8 @@ Examples:
 python3 scripts/count_text_size.py README.md
 python3 scripts/count_text_size.py skills/software-design-doc/SKILL.md --by-heading
 python3 scripts/count_text_size.py --format json README.md
+cat README.md | python3 scripts/count_text_size.py -
+python3 scripts/count_text_size.py --glob "**/*.md"
 python3 scripts/count_text_size.py --version
 ```
 
