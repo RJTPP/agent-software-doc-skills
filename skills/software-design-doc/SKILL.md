@@ -4,7 +4,7 @@ description: Draft, review, and update Software Design Descriptions using an IEE
 license: MIT
 metadata:
   author: RJTPP
-  version: 0.3.0
+  version: 0.3.2
 ---
 
 # Software Design Description
@@ -18,6 +18,7 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [references/sdd-template-implementation-deep.md](references/sdd-template-implementation-deep.md) when detail profile is `implementation-deep`.
 - Use [references/viewpoint-mapping.md](references/viewpoint-mapping.md) to choose viewpoints and map them to concrete views.
 - Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
+- Use [references/quality-attribute-scenarios.md](references/quality-attribute-scenarios.md) for quality-attribute scenario patterns.
 - Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required headings and core formalization sections.
 
 Mandatory preflight sequence:
@@ -154,7 +155,9 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Always include the core-3 formal artifacts:
   - `## 4. Architecture Overview`
   - `### 5.1 Viewpoint-to-View Mapping`
-  - `### 6.1 Design Element Catalog (Formal Definitions)` with fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`
+  - `### 6.1 Design Element Catalog (Formal Definitions)` with fields: `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`, `Public Functions`
+- For quality-driven concerns, include at least one scenario using: `Stimulus`, `Environment`, `Response`, `Measurement`.
+- In `6.5` and/or `11.x`, include a short future-evolution note when persistent data is currently absent (for example CMS/DB migration path).
 - If detail profile is `implementation-deep`, include extension sections:
   - `## 11. Data Design`
   - `## 12. Component Design`
@@ -181,7 +184,8 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 7. Validate generated outputs
 
-- Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only> --docs-dir <output-dir> --profile <ieee-pragmatic|implementation-deep>`.
+ - Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only> --docs-dir <output-dir> --profile <ieee-pragmatic|implementation-deep>`.
+ - For evals/CI strictness, run with `--require-all-subsections`.
 - Section completeness is strict by default; use `--allow-soft-sections` only when section checks should be advisory.
 - In `review-only`, use `--allow-input-sdd` if source SDD is colocated with generated gap report.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
@@ -220,6 +224,8 @@ Use these headings in order:
 - If an item is omitted, provide a short `N/A rationale`.
 - Favor correctness and implementability over ceremonial detail.
 - Keep terminology consistent with the project domain.
+- Prefer `UX consistency` / `visual design constraints` over vague labels such as `aesthetics`.
+- Prefer `single consolidated stylesheet` over `monolithic stylesheet`.
 - If the user asks for exact IEEE wording, decline and provide a non-verbatim summary.
 
 ## Output Quality Bar

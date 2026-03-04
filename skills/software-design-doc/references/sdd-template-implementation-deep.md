@@ -71,6 +71,7 @@
 ### 3.3 Non-Functional Targets (Recommended)
 - What to include: measurable targets for performance, accessibility, and reliability.
 - Minimum evidence: at least one measurable target per critical NFR category.
+- Scenario format: for at least one critical NFR, include `Stimulus:`, `Environment:`, `Response:`, and `Measurement:`.
 
 ## 4. Architecture Overview
 - What to include: high-level architecture with logical and deployment/runtime depiction.
@@ -134,7 +135,14 @@
 
 ### 6.1 Design Element Catalog (Formal Definitions)
 - What to include: each key component in a formal field-based definition.
-- Minimum evidence: each entry includes `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`.
+- Minimum evidence: each entry includes `Component`, `Responsibility`, `Inputs`, `Outputs`, `Dependencies`, `Public Functions`.
+- Example fields:
+  - `Component:`
+  - `Responsibility:`
+  - `Inputs:`
+  - `Outputs:`
+  - `Dependencies:`
+  - `Public Functions:`
 
 ### 6.2 Interfaces and Data Structures
 - What to include: interface boundaries and key structures/schemas.
@@ -151,6 +159,7 @@
 ### 6.5 Runtime State and Data Notes (Recommended)
 - What to include: persistent data vs runtime state vs configuration boundaries.
 - Minimum evidence: each category explicitly marked (or `None` with rationale).
+- Future evolution note: if persistent data is currently `None`, include one short note describing a likely future data evolution path.
 
 ## 7. Traceability
 - What to include: links between concerns/requirements and design decisions/views.
@@ -199,6 +208,7 @@
 ### 11.2 Data Description
 - What to include: store purpose, lifecycle states, and consistency expectations.
 - Minimum evidence: read/write patterns and consistency assumptions.
+- Future evolution note: include expected migration path when current storage is intentionally minimal/static.
 
 ### 11.3 Data Dictionary
 - What to include: key fields, semantics, and validation constraints.

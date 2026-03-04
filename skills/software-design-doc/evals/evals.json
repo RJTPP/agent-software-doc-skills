@@ -28,6 +28,26 @@
       "files": [
         "evals/fixtures/monolith-before-migration-sdd.md"
       ]
+    },
+    {
+      "id": 4,
+      "name": "deployment-only-architecture-gap",
+      "mode": "review-only",
+      "prompt": "Review `evals/fixtures/deployment-only-sdd.md` and identify architecture coverage gaps. Focus on missing logical application architecture and weak quality-attribute scenario evidence.",
+      "expected_output": "Gap report calls out missing logical architecture (`4.1`), incomplete architecture evidence, and recommends adding quality-attribute scenarios.",
+      "files": [
+        "evals/fixtures/deployment-only-sdd.md"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "interface-fields-gap",
+      "mode": "review-only",
+      "prompt": "Review `evals/fixtures/interface-light-sdd.md` for formal interface definition quality. Ensure design element entries have explicit inputs/outputs/dependencies/public functions.",
+      "expected_output": "Gap report flags missing formal interface fields and asks for structured component entries with Inputs/Outputs/Dependencies/Public Functions.",
+      "files": [
+        "evals/fixtures/interface-light-sdd.md"
+      ]
     }
   ]
 }
