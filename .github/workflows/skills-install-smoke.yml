@@ -4,6 +4,13 @@ env:
   SKILLS_SOURCE: .
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "skills/**"
+      - "README.md"
+      - ".github/workflows/skills-install-smoke.yml"
   push:
     branches:
       - main
