@@ -27,3 +27,19 @@ Use at least one scenario for each critical quality concern area (for example pe
 - `Environment:` production build in supported browsers
 - `Response:` focus order and visible focus states remain correct
 - `Measurement:` no blocking accessibility issues in automated audits and manual keyboard walkthrough
+
+## Example: Database Failover Resilience
+
+- `Scenario:` Primary database node failure
+- `Stimulus:` primary DB instance becomes unavailable (crash or network partition)
+- `Environment:` production environment with replica configured
+- `Response:` system automatically promotes replica and resumes accepting reads and writes
+- `Measurement:` total downtime does not exceed 30 seconds; no data loss for committed transactions
+
+## Example: Authentication Security Gate
+
+- `Scenario:` Brute-force login attempt
+- `Stimulus:` an automated client sends more than 10 failed login requests for a single account within 60 seconds
+- `Environment:` production API endpoint exposed to the internet
+- `Response:` account is temporarily locked and subsequent attempts are rejected with a rate-limit error
+- `Measurement:` lock triggered within the same 60-second window; legitimate user can recover via email reset within 5 minutes

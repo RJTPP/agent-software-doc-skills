@@ -10,18 +10,19 @@ Each selected viewpoint must map to at least one concrete view section.
 
 ## Mapping Table
 
-| Concern Type | Recommended Viewpoint(s) | Expected SDD Section(s) | Typical Evidence |
-| --- | --- | --- | --- |
-| System boundary and external actors | Context | 5.2 Context View | Use cases, external interfaces, boundary definition |
-| Decomposition into modules/services | Composition | 5.3 Composition View | Components, ownership, assembly model |
-| Type model and static structure | Logical | 5.4 Logical View | Class/type models, static relationships |
-| Build/runtime coupling impact | Dependency | 5.5 Dependency View | Dependency graph, integration constraints |
-| Persistent data and semantics | Information | 5.6 Information View | Data entities, stores, access rules |
-| API/service contracts | Interface | 5.7 Interface View | Endpoints/interfaces, schemas, error contracts |
-| Collaboration behavior and flows | Interaction | 5.8 Interaction / State / Algorithm Views | Sequence or message flow descriptions |
-| Modes, transitions, reactive behavior | State Dynamics | 5.8 Interaction / State / Algorithm Views | State models and transition rules |
-| Procedural logic and computation | Algorithm | 5.8 Interaction / State / Algorithm Views | Key algorithms and decision flow |
-| Performance/capacity/limits | Resources | 5.9 Resource View | Resource budgets, quotas, scaling constraints |
+| Concern Type                                   | Recommended Viewpoint(s) | Expected SDD Section(s)                   | Typical Evidence                                            |
+| ---------------------------------------------- | ------------------------ | ----------------------------------------- | ----------------------------------------------------------- |
+| System boundary and external actors            | Context                  | 5.2 Context View                          | Use cases, external interfaces, boundary definition         |
+| Decomposition into modules/services            | Composition              | 5.3 Composition View                      | Components, ownership, assembly model                       |
+| Type model and static structure                | Logical                  | 5.4 Logical View                          | Class/type models, static relationships                     |
+| Build/runtime coupling impact                  | Dependency               | 5.5 Dependency View                       | Dependency graph, integration constraints                   |
+| Persistent data and semantics                  | Information              | 5.6 Information View                      | Data entities, stores, access rules                         |
+| API/service contracts                          | Interface                | 5.7 Interface View                        | Endpoints/interfaces, schemas, error contracts              |
+| Collaboration behavior and flows               | Interaction              | 5.8 Interaction / State / Algorithm Views | Sequence or message flow descriptions                       |
+| Modes, transitions, reactive behavior          | State Dynamics           | 5.8 Interaction / State / Algorithm Views | State models and transition rules                           |
+| Procedural logic and computation               | Algorithm                | 5.8 Interaction / State / Algorithm Views | Key algorithms and decision flow                            |
+| Performance/capacity/limits                    | Resources                | 5.9 Resource View                         | Resource budgets, quotas, scaling constraints               |
+| Deployment topology and environment boundaries | Physical/Deployment      | 4.2 Deployment and Runtime Topology       | Node/environment diagram, hosting boundaries, runtime paths |
 
 Use template section names as canonical labels. Internal aliases are fine only when explicitly mapped.
 
@@ -45,12 +46,12 @@ Use template section names as canonical labels. Internal aliases are fine only w
 Use this section when detail profile is `implementation-deep`.
 These sections extend the base template views; they do not replace base sections.
 
-| Concern Type | Deep Section(s) | Typical Evidence |
-| --- | --- | --- |
-| Deployment topology and runtime boundaries | 4.2 Deployment and Runtime Topology | Environment diagram, runtime boundary notes |
-| Data contracts and storage behavior | 11. Data Design | ERD summary, data dictionary, cache/storage model |
-| Service boundaries and implementation handoff | 12. Component Design | Component responsibilities, API route matrix, failure handling |
-| User interaction specifics and UX constraints | 13. Human Interface Design | Screen/wireframe references, key flows, interaction rules |
-| Requirement-to-design accountability | 14. Requirements Traceability Matrix | Requirement mapping table with coverage status |
-| Operational concerns and implementation details | 15. Appendices | Sequence/state models, config matrix, cache/security/testing/risk notes |
-| Architecture decision continuity | 16. Design Decisions (Locked) | ADR-style decisions, rationale, deferred decisions |
+| Concern Type                                    | Deep Section(s)                      | Typical Evidence                                                        |
+| ----------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------- |
+| Deployment topology and runtime boundaries      | 4.2 Deployment and Runtime Topology  | Environment diagram, runtime boundary notes                             |
+| Data contracts and storage behavior             | 11. Data Design                      | ERD summary, data dictionary, cache/storage model                       |
+| Service boundaries and implementation handoff   | 12. Component Design                 | Component responsibilities, API route matrix, failure handling          |
+| User interaction specifics and UX constraints   | 13. Human Interface Design           | Screen/wireframe references, key flows, interaction rules               |
+| Requirement-to-design accountability            | 14. Requirements Traceability Matrix | Requirement mapping table with coverage status                          |
+| Operational concerns and implementation details | 15. Appendices                       | Sequence/state models, config matrix, cache/security/testing/risk notes |
+| Architecture decision continuity                | 16. Design Decisions (Locked)        | ADR-style decisions, rationale, deferred decisions                      |
