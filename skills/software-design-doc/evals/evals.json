@@ -6,7 +6,7 @@
       "name": "draft-invoice-platform-multi-file",
       "mode": "draft+review",
       "prompt": "Create an SDD document set using an IEEE 1016-2009-inspired structure for a cloud-based invoice processing platform from this PRD summary: multi-tenant web app, REST API, OCR ingestion pipeline, role-based access, audit logs, and nightly reporting jobs. Use the default multi-file output root.",
-      "expected_output": "Creates docs/sdd/index.md, the numbered base section files, and docs/sdd/gap-report.md with explicit Architecture Overview, explicit Viewpoint-to-View Mapping, formal Design Element definitions, concern-driven views, and prioritized remediation actions.",
+      "expected_output": "Creates docs/sdd/index.md, the numbered base section files, and a dated gap report under .agent-doc-skills/sdd/gaps/ with explicit Architecture Overview, explicit Viewpoint-to-View Mapping, formal Design Element definitions, concern-driven views, and prioritized remediation actions.",
       "files": []
     },
     {
@@ -14,7 +14,7 @@
       "name": "review-only-multi-file-gap-analysis",
       "mode": "review-only",
       "prompt": "Review the existing multi-file SDD in `evals/fixtures/multi-file-review-incomplete/` for completeness and gaps. It has partial introduction, architecture, and design element coverage but is missing core canonical files and weak on traceability. Use review-only mode.",
-      "expected_output": "Produces gap-report.md only, identifying missing canonical files, missing required sections/artifacts, weak rationale, traceability gaps, and prioritized fixes for the document set.",
+      "expected_output": "Produces a dated gap report under .agent-doc-skills/sdd/gaps/ identifying missing canonical files, missing required sections/artifacts, weak rationale, traceability gaps, and prioritized fixes for the document set.",
       "files": [
         "evals/fixtures/multi-file-review-incomplete"
       ]
@@ -24,7 +24,7 @@
       "name": "migration-single-file-to-multi-file",
       "mode": "draft+review",
       "prompt": "Update the monolith SDD in `evals/fixtures/monolith-before-migration-sdd.md` after a migration decision to event-driven microservices with service boundaries, async messaging, API gateway, and separate operational data stores. Convert it into the canonical multi-file SDD set and use draft+review mode.",
-      "expected_output": "Transforms the single-file input into docs/sdd/index.md plus the canonical numbered section files and docs/sdd/gap-report.md, with explicit architecture/views/elements formalization and migration-specific risks and remaining gaps.",
+      "expected_output": "Transforms the single-file input into docs/sdd/index.md plus the canonical numbered section files and a dated gap report under .agent-doc-skills/sdd/gaps/, with explicit architecture/views/elements formalization and migration-specific risks and remaining gaps.",
       "files": [
         "evals/fixtures/monolith-before-migration-sdd.md"
       ]
@@ -34,7 +34,7 @@
       "name": "review-only-deployment-gaps-multi-file",
       "mode": "review-only",
       "prompt": "Review `evals/fixtures/multi-file-review-incomplete/` and identify architecture coverage gaps. Focus on missing canonical files, weak traceability, and incomplete formal component definitions.",
-      "expected_output": "Gap report calls out missing canonical files, incomplete formal design element definitions, and the absence of traceability and view coverage.",
+      "expected_output": "A dated gap report under .agent-doc-skills/sdd/gaps/ calls out missing canonical files, incomplete formal design element definitions, and the absence of traceability and view coverage.",
       "files": [
         "evals/fixtures/multi-file-review-incomplete"
       ]
@@ -44,8 +44,18 @@
       "name": "implementation-deep-multi-file-package",
       "mode": "draft+review",
       "prompt": "Create an implementation-deep SDD document set for an invoice workflow platform with OCR, approvals, exports, reporting, and operator UI. Include data design, component design, human interface design, requirements traceability matrix, appendices, and locked decisions in the canonical multi-file layout.",
-      "expected_output": "Creates docs/sdd/index.md, base numbered section files, deep files 11-16, and docs/sdd/gap-report.md with explicit formal definitions, traceability, and implementation-depth coverage.",
+      "expected_output": "Creates docs/sdd/index.md, base numbered section files, deep files 11-16, and a dated gap report under .agent-doc-skills/sdd/gaps/ with explicit formal definitions, traceability, and implementation-depth coverage.",
       "files": []
+    },
+    {
+      "id": 6,
+      "name": "drift-check-sdd-against-codebase",
+      "mode": "drift-check",
+      "prompt": "Check whether the existing SDD document set in `evals/fixtures/multi-file-complete-base/` appears outdated relative to recent repository changes. Use drift-check mode and report likely affected SDD files or sections without rewriting the SDD.",
+      "expected_output": "Produces a dated drift report under .agent-doc-skills/sdd/drift/ with baseline commit metadata, current commit context, changed areas summary, recommended SDD files/sections to revisit, and a suggested next action without editing canonical SDD files.",
+      "files": [
+        "evals/fixtures/multi-file-complete-base"
+      ]
     }
   ]
 }

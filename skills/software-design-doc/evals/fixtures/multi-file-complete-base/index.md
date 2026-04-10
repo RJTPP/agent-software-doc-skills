@@ -5,6 +5,8 @@
 - Version: 1.0
 - Status: Draft
 - Date of Issue: 2026-04-10
+- Doc Baseline Commit: abc1234
+- Last Reviewed On: 2026-04-10
 - Issuing Organization: Example Corp
 - Authors: Architecture Team
 - Body Organization: Product Engineering

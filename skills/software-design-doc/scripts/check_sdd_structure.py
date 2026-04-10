@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Manual structure checker for software-design-doc multi-file outputs."""
+"""Manual structure checker for software-design-doc canonical SDD outputs."""
 
 from __future__ import annotations
 
@@ -10,7 +10,6 @@ import re
 from typing import Any
 
 INDEX_FILE = "index.md"
-GAP_REPORT_FILE = "gap-report.md"
 
 BASE_FILE_ORDER = [
     INDEX_FILE,
@@ -135,15 +134,6 @@ FILE_HEADINGS: dict[str, list[str]] = {
         "## 16. Design Decisions (Locked)",
         "### 16.1 Architectural Decisions and Rationale",
         "### 16.2 Deferred Decisions",
-    ],
-    GAP_REPORT_FILE: [
-        "# SDD Gap Report",
-        "## Scope and Inputs",
-        "## Missing Required Content",
-        "## Weak or Implicit Rationale",
-        "## Traceability Gaps",
-        "## Recommended Fixes (Priority Ordered)",
-        "## Coverage Summary",
     ],
 }
 
@@ -382,12 +372,11 @@ def run_checks(
         }
 
     required_sdd_files = _required_files_for_profile(profile)
-    gap_path = docs_dir / GAP_REPORT_FILE
     index_path = docs_dir / INDEX_FILE
 
     for filename in required_sdd_files:
         file_path = docs_dir / filename
-        severity = "hard" if mode != "review-only" else "input"
+        severity = "hard" if mode not in {"review-only", "drift-check"} else "input"
         _add_check(
             checks,
             f"file-{filename}-exists",
@@ -396,22 +385,8 @@ def run_checks(
             f"{file_path} exists -> {file_path.exists()}",
         )
 
-    gap_exists = gap_path.exists()
-    if mode == "draft+review":
-        _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
-    elif mode == "draft-only":
-        _add_check(
-            checks,
-            "file-gap-optional",
-            True,
-            "soft",
-            f"{gap_path} optional in draft-only mode (exists={gap_exists})",
-        )
-    elif mode == "review-only":
-        _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
-
     if index_path.exists():
-        index_severity = "soft" if mode != "review-only" else "input"
+        index_severity = "soft" if mode not in {"review-only", "drift-check"} else "input"
         _run_heading_checks(
             checks,
             "index",
@@ -437,23 +412,20 @@ def run_checks(
             file_path,
             FILE_HEADINGS[filename],
             enforce_order=require_all_subsections,
-            severity="soft" if mode != "review-only" else "input",
+            severity="soft" if mode not in {"review-only", "drift-check"} else "input",
         )
 
     for filename, headings in CORE3_REQUIRED_HEADINGS.items():
         file_path = docs_dir / filename
-        if file_path.exists() and mode != "review-only":
+        if file_path.exists() and mode not in {"review-only", "drift-check"}:
             _run_heading_checks(checks, f"core3-{filename}", file_path, headings)
 
     design_elements_path = docs_dir / "06-design-elements-and-constraints.md"
     concerns_path = docs_dir / "02-03-system-context-and-concerns.md"
-    if design_elements_path.exists() and mode != "review-only" and require_all_subsections:
+    if design_elements_path.exists() and mode not in {"review-only", "drift-check"} and require_all_subsections:
         _run_pattern_checks(checks, "sdd-interface-fields", design_elements_path, INTERFACE_FIELD_PATTERNS)
-    if concerns_path.exists() and mode != "review-only" and require_all_subsections:
+    if concerns_path.exists() and mode not in {"review-only", "drift-check"} and require_all_subsections:
         _run_pattern_checks(checks, "sdd-quality-scenario", concerns_path, QUALITY_SCENARIO_FIELD_PATTERNS)
-
-    if gap_exists and mode != "draft-only":
-        _run_heading_checks(checks, "gap", gap_path, FILE_HEADINGS[GAP_REPORT_FILE], enforce_order=True)
 
     return {
         "mode": mode,
@@ -465,17 +437,17 @@ def run_checks(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Check software-design-doc output structure.")
+    parser = argparse.ArgumentParser(description="Check software-design-doc canonical SDD structure.")
     parser.add_argument(
         "--mode",
-        choices=["draft+review", "draft-only", "review-only"],
+        choices=["draft+review", "draft-only", "review-only", "drift-check"],
         required=True,
         help="Expected output mode.",
     )
     parser.add_argument(
         "--docs-dir",
         default="docs/sdd",
-        help="Directory containing the SDD document set and/or gap-report.md",
+        help="Directory containing the canonical SDD document set.",
     )
     parser.add_argument(
         "--profile",
@@ -501,7 +473,7 @@ def main() -> int:
     parser.add_argument(
         "--strict-review-input",
         action="store_true",
-        help="In review-only mode, fail overall validation when reviewed input files, links, or headings are missing.",
+        help="In review-only or drift-check mode, fail overall validation when reviewed input files, links, or headings are missing.",
     )
     args = parser.parse_args()
 
@@ -517,7 +489,7 @@ def main() -> int:
     soft_fail_count = sum(1 for c in checks if c["severity"] == "soft" and not c["passed"])
     input_fail_count = sum(1 for c in checks if c["severity"] == "input" and not c["passed"])
     strict_sections = not args.allow_soft_sections
-    strict_review = args.mode == "review-only" and args.strict_review_input
+    strict_review = args.mode in {"review-only", "drift-check"} and args.strict_review_input
     passed = (
         hard_fail_count == 0
         and (soft_fail_count == 0 or not strict_sections)

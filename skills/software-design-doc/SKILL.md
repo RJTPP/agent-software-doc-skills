@@ -1,6 +1,6 @@
 ---
 name: software-design-doc
-description: Draft, review, and update Software Design Descriptions using an IEEE 1016-2009-inspired structure with explicit architecture/views/elements formalization and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate a gap report with remediation actions, perform SDD review-only gap analysis, or update an SDD after architecture changes.
+description: Draft, review, and update Software Design Descriptions using an IEEE 1016-2009-inspired structure with explicit architecture/views/elements formalization and output structure validation. Use this whenever a user asks to write an SDD, assess SDD quality/completeness, align design docs to IEEE 1016 concepts, map PRD requirements to design, produce architecture/interface/data design sections, generate remediation-oriented gap reports, perform SDD review-only gap analysis, check whether an SDD has drifted from the codebase, or update an SDD after architecture changes.
 license: MIT
 metadata:
   author: RJTPP
@@ -18,7 +18,7 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [references/viewpoint-mapping.md](references/viewpoint-mapping.md) to choose viewpoints and map them to concrete views.
 - Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
 - Use [references/quality-attribute-scenarios.md](references/quality-attribute-scenarios.md) for quality-attribute scenario patterns.
-- Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required files, headings, links, and core formalization sections across the generated document set.
+- Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required files, headings, links, and core formalization sections across the canonical SDD document set.
 - Use [scripts/count_text_size.py](scripts/count_text_size.py) to inspect file size quickly (`chars`, `words`, `lines`) and optional Markdown heading breakdown (`--by-heading`).
 
 Mandatory preflight sequence:
@@ -45,8 +45,9 @@ Do not start drafting until preflight confirmation is received, unless user expl
 - Completeness strictness: `pragmatic`.
 - Detail profile: `ieee-pragmatic`.
 - Codebase inspection: enabled when repository context is available.
-- Output root: `docs/sdd/`
-- Output files:
+- Canonical output root: `docs/sdd/`
+- Artifact root: `.agent-doc-skills/sdd/`
+- Canonical output files:
   - `docs/sdd/index.md`
   - `docs/sdd/01-introduction.md`
   - `docs/sdd/02-03-system-context-and-concerns.md`
@@ -55,20 +56,23 @@ Do not start drafting until preflight confirmation is received, unless user expl
   - `docs/sdd/06-design-elements-and-constraints.md`
   - `docs/sdd/07-08-traceability-and-rationale.md`
   - `docs/sdd/09-10-risks-and-summary.md`
-  - `docs/sdd/gap-report.md`
+- Review artifact files:
+  - `.agent-doc-skills/sdd/gaps/YYYY-MM-DD.md`
+  - `.agent-doc-skills/sdd/drift/YYYY-MM-DD.md`
 
 If the user specifies a different mode, follow the user preference.
-If the user specifies a different output root, only accept a safe relative directory inside the project folder.
+If the user specifies a different canonical output root or artifact root, only accept a safe relative directory inside the project folder.
 
 Mode shortcuts accepted in user prompts:
 
 - `/de` or `/draft+review` -> `draft+review`
 - `/d` or `/draft-only` -> `draft-only`
 - `/r` or `/review-only` -> `review-only`
+- `/dc` or `/drift-check` -> `drift-check`
 
 Mode resolution precedence:
 
-1. Explicit shortcut token in the prompt (`/de`, `/d`, `/r`, or long form)
+1. Explicit shortcut token in the prompt (`/de`, `/d`, `/r`, `/dc`, or long form)
 2. Clear natural-language intent (for example `review only`)
 3. Default to `draft+review`
 
@@ -88,7 +92,7 @@ If user asks for `detailed`, `implementation handoff`, `architecture deep dive`,
 ## Output Root Safety (Mandatory)
 
 - Only write outputs within the repository root (project folder).
-- Allow custom subdirectories when they remain inside the repository (for example `docs/reviews/v2/sdd/`).
+- Allow custom canonical or artifact subdirectories when they remain inside the repository (for example `docs/architecture/sdd/` or `.agent-doc-skills/custom/sdd/`).
 - Reject absolute paths and any path containing parent traversal (`..`).
 - Never write to sensitive paths (for example `.git/`, `.github/workflows/`, `/etc/`, home directories).
 - Never build shell commands by interpolating user-provided paths.
@@ -111,6 +115,7 @@ Useful optional inputs:
 - required viewpoints,
 - completeness strictness override,
 - explicit output root inside the project folder.
+- explicit artifact root inside the project folder.
 
 Before drafting, perform an intake check:
 
@@ -127,7 +132,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 1. Draft or update the canonical document set under `docs/sdd/`.
 2. Run completeness/gap analysis.
-3. Write both the SDD files and `gap-report.md`.
+3. Write the SDD files under `docs/sdd/` and a dated gap report under `.agent-doc-skills/sdd/gaps/`.
 
 ### `draft-only`
 
@@ -138,7 +143,14 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 1. Accept an existing document-set SDD root or `index.md` as input.
 2. Do not rewrite source files unless user asks.
-3. Produce `gap-report.md` with concrete remediation actions for the document set.
+3. Produce a dated gap report under `.agent-doc-skills/sdd/gaps/` with concrete remediation actions for the document set.
+
+### `drift-check`
+
+1. Accept an existing document-set SDD root or `index.md` plus repository context.
+2. Read `Doc Baseline Commit` from `docs/sdd/index.md` and compare `<baseline>..HEAD` using git history and diff summaries.
+3. Produce a dated drift report under `.agent-doc-skills/sdd/drift/` with changed areas, likely affected SDD files/sections, and suggested next action.
+4. Do not rewrite source SDD files in this mode unless user explicitly asks after reviewing the drift report.
 
 ## Required Workflow
 
@@ -162,6 +174,8 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Use `references/document-set/` as the canonical template library.
 - When the source is a legacy single-file SDD, redistribute its validated content into the canonical document set instead of preserving the old layout.
 - `index.md` is the document entrypoint and must contain document control metadata plus links to every generated section file in canonical order.
+- Store document-set drift metadata only in `index.md`; do not duplicate it across section files.
+- Include `Doc Baseline Commit` and `Last Reviewed On` in `## Document Control` when repository context is available.
 - Use original wording; do not quote or mirror copyrighted standards text.
 - Preserve required section ownership by file.
 - Keep core architecture sections at the architectural abstraction level (layers/components/responsibilities), not file-by-file implementation listings.
@@ -192,20 +206,30 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Check that `index.md` links to every generated section file.
 - Allow justified simplification for project scale.
 
-6. Write outputs
+6. Run drift assessment when mode is `drift-check`
+
+- Read `Doc Baseline Commit` from `index.md`.
+- If the baseline is missing, invalid, or not reachable in git history, stop and ask the user to confirm how to establish a new baseline instead of fabricating one.
+- Compare `<baseline>..HEAD` with `git log` and `git diff --stat` style summaries.
+- Map changed areas to likely affected SDD files/sections.
+- Keep the output advisory; do not update canonical SDD files automatically.
+
+7. Write outputs
 
 - Ensure parent directory exists.
-- Resolve output root safely inside repository root only.
-- For `draft+review` or `draft-only`, write the canonical section files under the output root.
-- For `draft+review` or `review-only`, write `gap-report.md` under the output root.
-- In `review-only`, do not modify source SDD files unless explicitly requested.
+- Resolve canonical output root and artifact root safely inside repository root only.
+- For `draft+review` or `draft-only`, write the canonical section files under `docs/sdd/` or the approved custom canonical root.
+- For `draft+review` or `review-only`, write a dated gap report under `.agent-doc-skills/sdd/gaps/` or the approved custom artifact root.
+- For `drift-check`, write a dated drift report under `.agent-doc-skills/sdd/drift/` or the approved custom artifact root.
+- In `review-only` and `drift-check`, do not modify source SDD files unless explicitly requested.
 
-7. Validate generated outputs
+8. Validate canonical outputs
 
-- Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only> --docs-dir <output-root> --profile <ieee-pragmatic|implementation-deep>`.
+- Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only|drift-check> --docs-dir <canonical-output-root> --profile <ieee-pragmatic|implementation-deep>`.
 - For evals/CI strictness, run with `--require-all-subsections`.
 - Section completeness is strict by default; use `--allow-soft-sections` only when section checks should be advisory.
-- In `review-only`, add `--strict-review-input` when CI/evals should fail on missing canonical input files, missing document-map links, or missing required headings in the reviewed SDD set.
+- In `review-only` or `drift-check`, add `--strict-review-input` when CI/evals should fail on missing canonical input files, missing document-map links, or missing required headings in the reviewed SDD set.
+- The checker validates only the canonical SDD document set. It does not validate gap or drift artifact files.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
 
 ## Canonical Base File Set
@@ -233,6 +257,28 @@ Use these headings in order:
 6. `## Recommended Fixes (Priority Ordered)`
 7. `## Coverage Summary`
 
+Write dated gap reports under `.agent-doc-skills/sdd/gaps/YYYY-MM-DD.md`.
+
+## Drift Report Format
+
+Use these headings in order:
+
+1. `# SDD Drift Report — YYYY-MM-DD`
+2. `## Scope and Baseline`
+3. `## Changed Since Last Review`
+4. `## Recommended SDD Files and Sections to Revisit`
+5. `## Suggested Next Action`
+
+Include these metadata bullets near the top:
+
+- `SDD Root:`
+- `Baseline Commit:`
+- `Current Commit:`
+- `Commits Since Baseline:`
+- `Checked On:`
+
+Write dated drift reports under `.agent-doc-skills/sdd/drift/YYYY-MM-DD.md`.
+
 ## Pragmatic Completeness Rules
 
 - Treat mapped core content areas as required unless genuinely out of scope.
@@ -254,11 +300,14 @@ Use these headings in order:
 - Design elements are formally defined with component fields.
 - Terminology, component names, and version/references are internally consistent across files.
 - Gap report recommendations are actionable and prioritized.
+- Drift reports clearly map code changes back to likely SDD updates without editing canonical docs automatically.
 - No machine-specific assumptions or absolute local-only dependencies in document content.
 
 ## Example Requests That Should Trigger This Skill
 
 - "Write an SDD document set with an IEEE 1016-inspired structure from this PRD and repo structure."
 - "Review this multi-file SDD and list standards gaps with fixes."
+- "Check whether our SDD is outdated after these repo changes."
+- "What changed since the last SDD update?"
 - "Update our SDD docs after moving from monolith to microservices."
 - "Map PRD requirements to design sections and identify missing architecture details."
