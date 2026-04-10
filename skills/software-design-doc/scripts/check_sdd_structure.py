@@ -15,15 +15,12 @@ GAP_REPORT_FILE = "gap-report.md"
 BASE_FILE_ORDER = [
     INDEX_FILE,
     "01-introduction.md",
-    "02-system-overview.md",
-    "03-stakeholders-and-concerns.md",
+    "02-system-context-and-concerns.md",
     "04-architecture-overview.md",
     "05-viewpoints-and-views.md",
     "06-design-elements-and-constraints.md",
-    "07-traceability.md",
-    "08-design-rationale.md",
-    "09-risks-and-mitigations.md",
-    "10-summary.md",
+    "07-traceability-and-rationale.md",
+    "09-risks-and-summary.md",
 ]
 
 DEEP_FILE_ORDER = [
@@ -50,13 +47,11 @@ FILE_HEADINGS: dict[str, list[str]] = {
         "### 1.5 References",
         "### 1.6 Glossary",
     ],
-    "02-system-overview.md": [
+    "02-system-context-and-concerns.md": [
         "## 2. System Overview",
         "### 2.1 Product and Runtime Context",
         "### 2.2 External Systems and Integrations",
         "### 2.3 Operating Constraints",
-    ],
-    "03-stakeholders-and-concerns.md": [
         "## 3. Stakeholders and Design Concerns",
         "### 3.1 Stakeholder List",
         "### 3.2 Concern Catalog",
@@ -88,21 +83,17 @@ FILE_HEADINGS: dict[str, list[str]] = {
         "### 6.4 Constraints and Assumptions",
         "### 6.5 Runtime State and Data Notes (Recommended)",
     ],
-    "07-traceability.md": [
+    "07-traceability-and-rationale.md": [
         "## 7. Traceability",
         "### 7.1 Requirement/Concern to Design Mapping",
         "### 7.2 Coverage and Gaps",
-    ],
-    "08-design-rationale.md": [
         "## 8. Design Rationale",
         "### 8.1 Key Decisions",
         "### 8.2 Alternatives Considered",
         "### 8.3 Tradeoff Analysis",
     ],
-    "09-risks-and-mitigations.md": [
+    "09-risks-and-summary.md": [
         "## 9. Risks and Mitigations",
-    ],
-    "10-summary.md": [
         "## 10. Summary",
     ],
     "11-data-design.md": [
@@ -464,7 +455,7 @@ def run_checks(
             _run_heading_checks(checks, f"core3-{filename}", file_path, headings)
 
     design_elements_path = docs_dir / "06-design-elements-and-constraints.md"
-    concerns_path = docs_dir / "03-stakeholders-and-concerns.md"
+    concerns_path = docs_dir / "02-system-context-and-concerns.md"
     if design_elements_path.exists() and mode != "review-only" and require_all_subsections:
         _run_pattern_checks(checks, "sdd-interface-fields", design_elements_path, INTERFACE_FIELD_PATTERNS)
     if concerns_path.exists() and mode != "review-only" and require_all_subsections:

@@ -49,15 +49,12 @@ Do not start drafting until preflight confirmation is received, unless user expl
 - Output files:
   - `docs/sdd/index.md`
   - `docs/sdd/01-introduction.md`
-  - `docs/sdd/02-system-overview.md`
-  - `docs/sdd/03-stakeholders-and-concerns.md`
+  - `docs/sdd/02-system-context-and-concerns.md`
   - `docs/sdd/04-architecture-overview.md`
   - `docs/sdd/05-viewpoints-and-views.md`
   - `docs/sdd/06-design-elements-and-constraints.md`
-  - `docs/sdd/07-traceability.md`
-  - `docs/sdd/08-design-rationale.md`
-  - `docs/sdd/09-risks-and-mitigations.md`
-  - `docs/sdd/10-summary.md`
+  - `docs/sdd/07-traceability-and-rationale.md`
+  - `docs/sdd/09-risks-and-summary.md`
   - `docs/sdd/gap-report.md`
 
 If the user specifies a different mode, follow the user preference.
@@ -218,15 +215,12 @@ Use these files as the default document sequence:
 
 1. `index.md`
 2. `01-introduction.md`
-3. `02-system-overview.md`
-4. `03-stakeholders-and-concerns.md`
-5. `04-architecture-overview.md`
-6. `05-viewpoints-and-views.md`
-7. `06-design-elements-and-constraints.md`
-8. `07-traceability.md`
-9. `08-design-rationale.md`
-10. `09-risks-and-mitigations.md`
-11. `10-summary.md`
+3. `02-system-context-and-concerns.md`
+4. `04-architecture-overview.md`
+5. `05-viewpoints-and-views.md`
+6. `06-design-elements-and-constraints.md`
+7. `07-traceability-and-rationale.md`
+8. `09-risks-and-summary.md`
 
 ## Gap Report Format
 
