@@ -4,7 +4,9 @@
 - Title:
 - Version:
 - Status:
-- Date of Issue:
+- Date of Issue: YYYY-MM-DD
+- Doc Baseline Commit: <git-commit-sha>
+- Last Reviewed On: YYYY-MM-DD
 - Issuing Organization:
 - Authors:
 - Body Organization:
