@@ -14,7 +14,7 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 ## Resources
 
 - Use [references/sdd-completeness-checklist.md](references/sdd-completeness-checklist.md) for completeness gates and required content coverage.
-- Use the templates under [references/multi-file/](references/multi-file/) as the canonical SDD document-set structure.
+- Use the templates under [references/document-set/](references/document-set/) as the canonical SDD document-set structure.
 - Use [references/viewpoint-mapping.md](references/viewpoint-mapping.md) to choose viewpoints and map them to concrete views.
 - Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
 - Use [references/quality-attribute-scenarios.md](references/quality-attribute-scenarios.md) for quality-attribute scenario patterns.
@@ -101,8 +101,8 @@ If user asks for `detailed`, `implementation handoff`, `architecture deep dive`,
 Expect at least one of:
 
 - project requirements/PRD context, or
-- an existing multi-file SDD root or `index.md` to review/update, or
-- a legacy single-file SDD to convert into the canonical multi-file set.
+- an existing SDD document set root or `index.md` to review/update, or
+- a legacy single-file SDD to convert into the canonical document set.
 
 If neither is available, stop and ask for missing inputs before drafting.
 Do not invent project-specific architecture details.
@@ -139,7 +139,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 ### `review-only`
 
-1. Accept an existing multi-file SDD root or `index.md` as input.
+1. Accept an existing document-set SDD root or `index.md` as input.
 2. Do not rewrite source files unless user asks.
 3. Produce `gap-report.md` with concrete remediation actions for the document set.
 
@@ -148,7 +148,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 1. Discover context
 
 - Inspect repository docs and key code structure by default.
-- Identify available artifacts: PRD, existing multi-file SDD files, legacy single-file SDDs, architecture notes, APIs, schemas.
+- Identify available artifacts: PRD, existing document-set SDD files, legacy single-file SDDs, architecture notes, APIs, schemas.
 
 2. Identify stakeholders and concerns
 
@@ -162,8 +162,8 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 
 4. Draft or update the SDD document set
 
-- Use `references/multi-file/` as the canonical template library.
-- When the source is a legacy single-file SDD, redistribute its validated content into the canonical multi-file file set instead of preserving the old layout.
+- Use `references/document-set/` as the canonical template library.
+- When the source is a legacy single-file SDD, redistribute its validated content into the canonical document set instead of preserving the old layout.
 - `index.md` is the document entrypoint and must contain document control metadata plus links to every generated section file in canonical order.
 - Use original wording; do not quote or mirror copyrighted standards text.
 - Preserve required section ownership by file.
