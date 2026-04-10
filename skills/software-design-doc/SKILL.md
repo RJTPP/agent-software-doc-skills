@@ -19,6 +19,7 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [references/copyright-safety.md](references/copyright-safety.md) for copyright/standards guardrails.
 - Use [references/quality-attribute-scenarios.md](references/quality-attribute-scenarios.md) for quality-attribute scenario patterns.
 - Use [scripts/check_sdd_structure.py](scripts/check_sdd_structure.py) to validate required files, headings, links, and core formalization sections across the canonical SDD document set.
+- Use [scripts/check_doc_artifacts.py](scripts/check_doc_artifacts.py) to validate dated gap and drift artifact history under `.agent-doc-skills/`.
 - Use [scripts/count_text_size.py](scripts/count_text_size.py) to inspect file size quickly (`chars`, `words`, `lines`) and optional Markdown heading breakdown (`--by-heading`).
 
 Mandatory preflight sequence:
@@ -231,6 +232,13 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - In `review-only` or `drift-check`, add `--strict-review-input` when CI/evals should fail on missing canonical input files, missing document-map links, or missing required headings in the reviewed SDD set.
 - The checker validates only the canonical SDD document set. It does not validate gap or drift artifact files.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
+
+9. Validate dated artifact outputs
+
+- For `draft+review` or `review-only`, run `python3 scripts/check_doc_artifacts.py --artifact-root <artifact-root> --doc-kind sdd --artifact-kind gaps`.
+- For `drift-check`, run `python3 scripts/check_doc_artifacts.py --artifact-root <artifact-root> --doc-kind sdd --artifact-kind drift`.
+- The artifact checker enforces that dated markdown files exist and use `YYYY-MM-DD.md` naming.
+- Treat missing required artifact history as a blocker in evals/CI.
 
 ## Canonical Base File Set
 

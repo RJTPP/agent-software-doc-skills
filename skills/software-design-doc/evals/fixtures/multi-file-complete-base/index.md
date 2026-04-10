@@ -5,7 +5,7 @@
 - Version: 1.0
 - Status: Draft
 - Date of Issue: 2026-04-10
-- Doc Baseline Commit: abc1234
+- Doc Baseline Commit: <git-commit-sha>
 - Last Reviewed On: 2026-04-10
 - Issuing Organization: Example Corp
 - Authors: Architecture Team

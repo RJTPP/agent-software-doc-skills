@@ -49,10 +49,10 @@
     },
     {
       "id": 6,
-      "name": "drift-check-sdd-against-codebase",
+      "name": "drift-check-invalid-baseline",
       "mode": "drift-check",
-      "prompt": "Check whether the existing SDD document set in `evals/fixtures/multi-file-complete-base/` appears outdated relative to recent repository changes. Use drift-check mode and report likely affected SDD files or sections without rewriting the SDD.",
-      "expected_output": "Produces a dated drift report under .agent-doc-skills/sdd/drift/ with baseline commit metadata, current commit context, changed areas summary, recommended SDD files/sections to revisit, and a suggested next action without editing canonical SDD files.",
+      "prompt": "Check whether the existing SDD document set in `evals/fixtures/multi-file-complete-base/` appears outdated relative to recent repository changes. Use drift-check mode. The stored baseline commit may be missing, invalid, or unreachable, so do not fabricate drift results.",
+      "expected_output": "Detects that the stored baseline commit is missing, invalid, or unreachable and asks the user to establish or reset the baseline instead of producing a normal drift report.",
       "files": [
         "evals/fixtures/multi-file-complete-base"
       ]
