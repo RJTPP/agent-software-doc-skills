@@ -359,7 +359,6 @@ def _required_files_for_profile(profile: str) -> list[str]:
 def run_checks(
     mode: str,
     docs_dir: Path,
-    allow_input_index: bool = False,
     profile: str = "ieee-pragmatic",
     require_all_subsections: bool = False,
     strict_review_input: bool = False,
@@ -410,14 +409,6 @@ def run_checks(
         )
     elif mode == "review-only":
         _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
-        if allow_input_index:
-            _add_check(
-                checks,
-                "file-index-allowed",
-                True,
-                "soft",
-                f"{index_path} is allowed in review-only mode for colocated input (exists={index_path.exists()})",
-            )
 
     if index_path.exists():
         index_severity = "soft" if mode != "review-only" else "input"
@@ -503,11 +494,6 @@ def main() -> int:
         help="Do not fail overall result when only section checks fail.",
     )
     parser.add_argument(
-        "--allow-input-index",
-        action="store_true",
-        help="In review-only mode, allow index.md to exist as colocated input.",
-    )
-    parser.add_argument(
         "--require-all-subsections",
         action="store_true",
         help="Require all template subsections and per-file heading order checks.",
@@ -522,7 +508,6 @@ def main() -> int:
     result = run_checks(
         args.mode,
         Path(args.docs_dir).resolve(),
-        allow_input_index=args.allow_input_index,
         profile=args.profile,
         require_all_subsections=args.require_all_subsections,
         strict_review_input=args.strict_review_input,
@@ -542,7 +527,6 @@ def main() -> int:
     result["soft_fail_count"] = soft_fail_count
     result["strict_sections"] = strict_sections
     result["allow_soft_sections"] = args.allow_soft_sections
-    result["allow_input_index"] = args.allow_input_index
     result["require_all_subsections"] = args.require_all_subsections
     result["strict_review_input"] = args.strict_review_input
     result["input_fail_count"] = input_fail_count

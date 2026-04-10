@@ -205,7 +205,6 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - Run `python3 scripts/check_sdd_structure.py --mode <draft+review|draft-only|review-only> --docs-dir <output-root> --profile <ieee-pragmatic|implementation-deep>`.
 - For evals/CI strictness, run with `--require-all-subsections`.
 - Section completeness is strict by default; use `--allow-soft-sections` only when section checks should be advisory.
-- In `review-only`, use `--allow-input-index` if source `index.md` and generated `gap-report.md` are colocated.
 - In `review-only`, add `--strict-review-input` when CI/evals should fail on missing canonical input files, missing document-map links, or missing required headings in the reviewed SDD set.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
 
