@@ -3,51 +3,49 @@
   "evals": [
     {
       "id": 1,
-      "name": "draft-invoice-platform",
+      "name": "draft-invoice-platform-multi-file",
       "mode": "draft+review",
-      "prompt": "Create an SDD using an IEEE 1016-2009-inspired structure for a cloud-based invoice processing platform from this PRD summary: multi-tenant web app, REST API, OCR ingestion pipeline, role-based access, audit logs, and nightly reporting jobs. Default output paths are fine.",
-      "expected_output": "Creates docs/SDD.md and docs/SDD-gap-report.md with required section order, explicit Architecture Overview, explicit Viewpoint-to-View Mapping, formal Design Element definitions, concern-driven views, and prioritized remediation actions.",
+      "prompt": "Create an SDD document set using an IEEE 1016-2009-inspired structure for a cloud-based invoice processing platform from this PRD summary: multi-tenant web app, REST API, OCR ingestion pipeline, role-based access, audit logs, and nightly reporting jobs. Use the default multi-file output root.",
+      "expected_output": "Creates docs/sdd/index.md, the numbered base section files, and docs/sdd/gap-report.md with explicit Architecture Overview, explicit Viewpoint-to-View Mapping, formal Design Element definitions, concern-driven views, and prioritized remediation actions.",
       "files": []
     },
     {
       "id": 2,
-      "name": "review-only-gap-analysis",
+      "name": "review-only-multi-file-gap-analysis",
       "mode": "review-only",
-      "prompt": "Review the existing SDD in `evals/fixtures/review-only-input-sdd.md` for completeness and gaps. It includes core context and architecture notes but lacks explicit viewpoint-to-view mapping, formal design element definitions, and full traceability. Use review-only mode.",
-      "expected_output": "Produces docs/SDD-gap-report.md only, identifying missing required sections/artifacts, weak rationale, traceability gaps, and prioritized fixes.",
+      "prompt": "Review the existing multi-file SDD in `evals/fixtures/multi-file-review-incomplete/` for completeness and gaps. It has partial introduction, architecture, and design element coverage but is missing core canonical files and weak on traceability. Use review-only mode.",
+      "expected_output": "Produces gap-report.md only, identifying missing canonical files, missing required sections/artifacts, weak rationale, traceability gaps, and prioritized fixes for the document set.",
       "files": [
-        "evals/fixtures/review-only-input-sdd.md"
+        "evals/fixtures/multi-file-review-incomplete"
       ]
     },
     {
       "id": 3,
-      "name": "migration-monolith-to-microservices",
+      "name": "migration-single-file-to-multi-file",
       "mode": "draft+review",
-      "prompt": "Update the monolith SDD in `evals/fixtures/monolith-before-migration-sdd.md` after a migration decision to event-driven microservices with service boundaries, async messaging, API gateway, and separate operational data stores. Use draft+review mode.",
-      "expected_output": "Updates docs/SDD.md to the new required structure with explicit architecture/views/elements formalization and writes docs/SDD-gap-report.md covering migration impact, risks, and remaining gaps.",
+      "prompt": "Update the monolith SDD in `evals/fixtures/monolith-before-migration-sdd.md` after a migration decision to event-driven microservices with service boundaries, async messaging, API gateway, and separate operational data stores. Convert it into the canonical multi-file SDD set and use draft+review mode.",
+      "expected_output": "Transforms the single-file input into docs/sdd/index.md plus the canonical numbered section files and docs/sdd/gap-report.md, with explicit architecture/views/elements formalization and migration-specific risks and remaining gaps.",
       "files": [
         "evals/fixtures/monolith-before-migration-sdd.md"
       ]
     },
     {
       "id": 4,
-      "name": "deployment-only-architecture-gap",
+      "name": "review-only-deployment-gaps-multi-file",
       "mode": "review-only",
-      "prompt": "Review `evals/fixtures/deployment-only-sdd.md` and identify architecture coverage gaps. Focus on missing logical application architecture and weak quality-attribute scenario evidence.",
-      "expected_output": "Gap report calls out missing logical architecture (`4.1`), incomplete architecture evidence, and recommends adding quality-attribute scenarios.",
+      "prompt": "Review `evals/fixtures/multi-file-review-incomplete/` and identify architecture coverage gaps. Focus on missing canonical files, weak traceability, and incomplete formal component definitions.",
+      "expected_output": "Gap report calls out missing canonical files, incomplete formal design element definitions, and the absence of traceability and view coverage.",
       "files": [
-        "evals/fixtures/deployment-only-sdd.md"
+        "evals/fixtures/multi-file-review-incomplete"
       ]
     },
     {
       "id": 5,
-      "name": "interface-fields-gap",
-      "mode": "review-only",
-      "prompt": "Review `evals/fixtures/interface-light-sdd.md` for formal interface definition quality. Ensure design element entries have explicit inputs/outputs/dependencies/public functions.",
-      "expected_output": "Gap report flags missing formal interface fields and asks for structured component entries with Inputs/Outputs/Dependencies/Public Functions.",
-      "files": [
-        "evals/fixtures/interface-light-sdd.md"
-      ]
+      "name": "implementation-deep-multi-file-package",
+      "mode": "draft+review",
+      "prompt": "Create an implementation-deep SDD document set for an invoice workflow platform with OCR, approvals, exports, reporting, and operator UI. Include data design, component design, human interface design, requirements traceability matrix, appendices, and locked decisions in the canonical multi-file layout.",
+      "expected_output": "Creates docs/sdd/index.md, base numbered section files, deep files 11-16, and docs/sdd/gap-report.md with explicit formal definitions, traceability, and implementation-depth coverage.",
+      "files": []
     }
   ]
 }

@@ -1,0 +1,19 @@
+# SDD Gap Report
+
+## Scope and Inputs
+This placeholder gap report exists so review-only structure validation can run.
+
+## Missing Required Content
+Multiple core files are absent.
+
+## Weak or Implicit Rationale
+Rationale is mostly missing.
+
+## Traceability Gaps
+No requirement mapping is present.
+
+## Recommended Fixes (Priority Ordered)
+1. Restore the missing canonical files.
+
+## Coverage Summary
+Coverage is intentionally incomplete.
