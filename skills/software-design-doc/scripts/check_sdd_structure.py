@@ -15,12 +15,12 @@ GAP_REPORT_FILE = "gap-report.md"
 BASE_FILE_ORDER = [
     INDEX_FILE,
     "01-introduction.md",
-    "02-system-context-and-concerns.md",
+    "02-03-system-context-and-concerns.md",
     "04-architecture-overview.md",
     "05-viewpoints-and-views.md",
     "06-design-elements-and-constraints.md",
-    "07-traceability-and-rationale.md",
-    "09-risks-and-summary.md",
+    "07-08-traceability-and-rationale.md",
+    "09-10-risks-and-summary.md",
 ]
 
 DEEP_FILE_ORDER = [
@@ -47,7 +47,7 @@ FILE_HEADINGS: dict[str, list[str]] = {
         "### 1.5 References",
         "### 1.6 Glossary",
     ],
-    "02-system-context-and-concerns.md": [
+    "02-03-system-context-and-concerns.md": [
         "## 2. System Overview",
         "### 2.1 Product and Runtime Context",
         "### 2.2 External Systems and Integrations",
@@ -83,7 +83,7 @@ FILE_HEADINGS: dict[str, list[str]] = {
         "### 6.4 Constraints and Assumptions",
         "### 6.5 Runtime State and Data Notes (Recommended)",
     ],
-    "07-traceability-and-rationale.md": [
+    "07-08-traceability-and-rationale.md": [
         "## 7. Traceability",
         "### 7.1 Requirement/Concern to Design Mapping",
         "### 7.2 Coverage and Gaps",
@@ -92,7 +92,7 @@ FILE_HEADINGS: dict[str, list[str]] = {
         "### 8.2 Alternatives Considered",
         "### 8.3 Tradeoff Analysis",
     ],
-    "09-risks-and-summary.md": [
+    "09-10-risks-and-summary.md": [
         "## 9. Risks and Mitigations",
         "## 10. Summary",
     ],
@@ -446,7 +446,7 @@ def run_checks(
             _run_heading_checks(checks, f"core3-{filename}", file_path, headings)
 
     design_elements_path = docs_dir / "06-design-elements-and-constraints.md"
-    concerns_path = docs_dir / "02-system-context-and-concerns.md"
+    concerns_path = docs_dir / "02-03-system-context-and-concerns.md"
     if design_elements_path.exists() and mode != "review-only" and require_all_subsections:
         _run_pattern_checks(checks, "sdd-interface-fields", design_elements_path, INTERFACE_FIELD_PATTERNS)
     if concerns_path.exists() and mode != "review-only" and require_all_subsections:
