@@ -4,7 +4,7 @@ description: Draft, review, and update Software Design Descriptions using an IEE
 license: MIT
 metadata:
   author: RJTPP
-  version: 0.4.0-dev
+  version: 0.4.0
 ---
 
 # Software Design Description
