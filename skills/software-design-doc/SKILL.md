@@ -47,7 +47,7 @@ Do not start drafting until preflight confirmation is received, unless user expl
 - Detail profile: `ieee-pragmatic`.
 - Codebase inspection: enabled when repository context is available.
 - Canonical output root: `docs/sdd/`
-- Artifact root: `.agent-doc-skills/sdd/`
+- Artifact root: `.agent-doc-skills/`
 - Canonical output files:
   - `docs/sdd/index.md`
   - `docs/sdd/01-introduction.md`
@@ -93,7 +93,7 @@ If user asks for `detailed`, `implementation handoff`, `architecture deep dive`,
 ## Output Root Safety (Mandatory)
 
 - Only write outputs within the repository root (project folder).
-- Allow custom canonical or artifact subdirectories when they remain inside the repository (for example `docs/architecture/sdd/` or `.agent-doc-skills/custom/sdd/`).
+- Allow custom canonical roots or artifact parent roots when they remain inside the repository (for example `docs/architecture/sdd/` or `.agent-doc-artifacts/`).
 - Reject absolute paths and any path containing parent traversal (`..`).
 - Never write to sensitive paths (for example `.git/`, `.github/workflows/`, `/etc/`, home directories).
 - Never build shell commands by interpolating user-provided paths.
@@ -149,7 +149,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 ### `drift-check`
 
 1. Accept an existing document-set SDD root or `index.md` plus repository context.
-2. Read `Doc Baseline Commit` from `docs/sdd/index.md` and compare `<baseline>..HEAD` using git history and diff summaries.
+2. Read `Doc Baseline Commit` from the input SDD entrypoint `index.md` and compare `<baseline>..HEAD` using git history and diff summaries.
 3. Produce a dated drift report under `.agent-doc-skills/sdd/drift/` with changed areas, likely affected SDD files/sections, and suggested next action.
 4. Do not rewrite source SDD files in this mode unless user explicitly asks after reviewing the drift report.
 
@@ -218,10 +218,10 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 7. Write outputs
 
 - Ensure parent directory exists.
-- Resolve canonical output root and artifact root safely inside repository root only.
+- Resolve canonical output root and artifact parent root safely inside repository root only.
 - For `draft+review` or `draft-only`, write the canonical section files under `docs/sdd/` or the approved custom canonical root.
-- For `draft+review` or `review-only`, write a dated gap report under `.agent-doc-skills/sdd/gaps/` or the approved custom artifact root.
-- For `drift-check`, write a dated drift report under `.agent-doc-skills/sdd/drift/` or the approved custom artifact root.
+- For `draft+review` or `review-only`, write a dated gap report under `.agent-doc-skills/sdd/gaps/` or the approved custom artifact parent root.
+- For `drift-check`, write a dated drift report under `.agent-doc-skills/sdd/drift/` or the approved custom artifact parent root.
 - In `review-only` and `drift-check`, do not modify source SDD files unless explicitly requested.
 
 8. Validate canonical outputs
@@ -236,9 +236,9 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 9. Validate dated artifact outputs
 
 - For `draft+review` or `review-only`, run `python3 scripts/check_doc_artifacts.py --artifact-root <artifact-root> --doc-kind sdd --artifact-kind gaps`.
-- For `drift-check`, run `python3 scripts/check_doc_artifacts.py --artifact-root <artifact-root> --doc-kind sdd --artifact-kind drift`.
+- For `drift-check`, run `python3 scripts/check_doc_artifacts.py --artifact-root <artifact-root> --doc-kind sdd --artifact-kind drift` only when drift-check completed with a valid reachable baseline and produced a drift report.
 - The artifact checker enforces that dated markdown files exist and use `YYYY-MM-DD.md` naming.
-- Treat missing required artifact history as a blocker in evals/CI.
+- Treat missing required artifact history as a blocker in evals/CI when that artifact type is expected for the exercised branch.
 
 ## Canonical Base File Set
 
