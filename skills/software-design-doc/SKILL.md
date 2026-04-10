@@ -101,7 +101,8 @@ If user asks for `detailed`, `implementation handoff`, `architecture deep dive`,
 Expect at least one of:
 
 - project requirements/PRD context, or
-- an existing SDD root or `index.md` to review/update.
+- an existing multi-file SDD root or `index.md` to review/update, or
+- a legacy single-file SDD to convert into the canonical multi-file set.
 
 If neither is available, stop and ask for missing inputs before drafting.
 Do not invent project-specific architecture details.
@@ -118,7 +119,7 @@ Before drafting, perform an intake check:
 
 1. Confirm mode, detail profile, and output root.
 2. Confirm whether repository inspection should be used.
-3. Identify missing critical inputs (PRD context, existing SDD, key constraints).
+3. Identify missing critical inputs (PRD context, existing SDD input, key constraints).
 
 If critical inputs are missing, ask concise clarification questions first.
 Only skip clarification when user explicitly uses `/fast` or `/assume`.
@@ -147,7 +148,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 1. Discover context
 
 - Inspect repository docs and key code structure by default.
-- Identify available artifacts: PRD, existing SDD files, architecture notes, APIs, schemas.
+- Identify available artifacts: PRD, existing multi-file SDD files, legacy single-file SDDs, architecture notes, APIs, schemas.
 
 2. Identify stakeholders and concerns
 
@@ -162,6 +163,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 4. Draft or update the SDD document set
 
 - Use `references/multi-file/` as the canonical template library.
+- When the source is a legacy single-file SDD, redistribute its validated content into the canonical multi-file file set instead of preserving the old layout.
 - `index.md` is the document entrypoint and must contain document control metadata plus links to every generated section file in canonical order.
 - Use original wording; do not quote or mirror copyrighted standards text.
 - Preserve required section ownership by file.
@@ -207,6 +209,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - For evals/CI strictness, run with `--require-all-subsections`.
 - Section completeness is strict by default; use `--allow-soft-sections` only when section checks should be advisory.
 - In `review-only`, use `--allow-input-index` if source `index.md` and generated `gap-report.md` are colocated.
+- In `review-only`, add `--strict-review-input` when CI/evals should fail on missing canonical input files, missing document-map links, or missing required headings in the reviewed SDD set.
 - Treat checker hard-fail results as blockers and revise outputs before finalizing.
 
 ## Canonical Base File Set

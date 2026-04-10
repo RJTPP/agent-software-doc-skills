@@ -371,6 +371,7 @@ def run_checks(
     allow_input_index: bool = False,
     profile: str = "ieee-pragmatic",
     require_all_subsections: bool = False,
+    strict_review_input: bool = False,
 ) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
 
@@ -476,6 +477,7 @@ def run_checks(
         "mode": mode,
         "profile": profile,
         "docs_dir": str(docs_dir),
+        "strict_review_input": strict_review_input,
         "checks": checks,
     }
 
@@ -519,6 +521,11 @@ def main() -> int:
         action="store_true",
         help="Require all template subsections and per-file heading order checks.",
     )
+    parser.add_argument(
+        "--strict-review-input",
+        action="store_true",
+        help="In review-only mode, fail overall validation when reviewed input files, links, or headings are missing.",
+    )
     args = parser.parse_args()
 
     result = run_checks(
@@ -527,19 +534,26 @@ def main() -> int:
         allow_input_index=args.allow_input_index,
         profile=args.profile,
         require_all_subsections=args.require_all_subsections,
+        strict_review_input=args.strict_review_input,
     )
     checks = result["checks"]
     hard_fail_count = sum(1 for c in checks if c["severity"] == "hard" and not c["passed"])
     soft_fail_count = sum(1 for c in checks if c["severity"] == "soft" and not c["passed"])
     input_fail_count = sum(1 for c in checks if c["severity"] == "input" and not c["passed"])
     strict_sections = not args.allow_soft_sections
-    passed = hard_fail_count == 0 and (soft_fail_count == 0 or not strict_sections)
+    strict_review = args.mode == "review-only" and args.strict_review_input
+    passed = (
+        hard_fail_count == 0
+        and (soft_fail_count == 0 or not strict_sections)
+        and (input_fail_count == 0 or not strict_review)
+    )
     result["hard_fail_count"] = hard_fail_count
     result["soft_fail_count"] = soft_fail_count
     result["strict_sections"] = strict_sections
     result["allow_soft_sections"] = args.allow_soft_sections
     result["allow_input_index"] = args.allow_input_index
     result["require_all_subsections"] = args.require_all_subsections
+    result["strict_review_input"] = args.strict_review_input
     result["input_fail_count"] = input_fail_count
     result["passed"] = passed
 
@@ -548,7 +562,8 @@ def main() -> int:
         print(f"[{status}] ({check['severity']}) {check['id']}: {check['evidence']}")
     print(
         f"Summary: profile={args.profile} checks={len(checks)} hard_fail={hard_fail_count} soft_fail={soft_fail_count} "
-        f"input_fail={input_fail_count} strict_sections={strict_sections} overall={'PASS' if passed else 'FAIL'}"
+        f"input_fail={input_fail_count} strict_sections={strict_sections} strict_review_input={strict_review} "
+        f"overall={'PASS' if passed else 'FAIL'}"
     )
 
     if args.out:
