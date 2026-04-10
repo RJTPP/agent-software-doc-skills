@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Manual structure checker for software-design-doc outputs."""
+"""Manual structure checker for software-design-doc multi-file outputs."""
 
 from __future__ import annotations
 
@@ -9,96 +9,161 @@ from pathlib import Path
 import re
 from typing import Any
 
+INDEX_FILE = "index.md"
+GAP_REPORT_FILE = "gap-report.md"
 
-SDD_REQUIRED_HEADINGS = [
-    "## Document Control",
-    "## 1. Introduction",
-    "## 2. System Overview",
-    "## 3. Stakeholders and Design Concerns",
-    "## 4. Architecture Overview",
-    "## 5. Viewpoints and Views",
-    "## 6. Design Elements and Constraints",
-    "## 7. Traceability",
-    "## 8. Design Rationale",
-    "## 9. Risks and Mitigations",
-    "## 10. Summary",
+BASE_FILE_ORDER = [
+    INDEX_FILE,
+    "01-introduction.md",
+    "02-system-overview.md",
+    "03-stakeholders-and-concerns.md",
+    "04-architecture-overview.md",
+    "05-viewpoints-and-views.md",
+    "06-design-elements-and-constraints.md",
+    "07-traceability.md",
+    "08-design-rationale.md",
+    "09-risks-and-mitigations.md",
+    "10-summary.md",
 ]
 
-CORE3_REQUIRED_HEADINGS = [
-    "### 5.1 Viewpoint-to-View Mapping",
-    "### 6.1 Design Element Catalog (Formal Definitions)",
+DEEP_FILE_ORDER = [
+    "11-data-design.md",
+    "12-component-design.md",
+    "13-human-interface-design.md",
+    "14-requirements-traceability-matrix.md",
+    "15-appendices.md",
+    "16-design-decisions-locked.md",
 ]
 
-BASE_SUBSECTION_REQUIRED_HEADINGS = [
-    "### 1.1 Purpose",
-    "### 1.2 Scope",
-    "### 1.3 Context",
-    "### 1.4 Intended Audience",
-    "### 1.5 References",
-    "### 1.6 Glossary",
-    "### 2.1 Product and Runtime Context",
-    "### 2.2 External Systems and Integrations",
-    "### 2.3 Operating Constraints",
-    "### 3.1 Stakeholder List",
-    "### 3.2 Concern Catalog",
-    "### 3.3 Non-Functional Targets (Recommended)",
-    "### 4.1 Logical Architecture",
-    "### 4.2 Deployment and Runtime Topology",
-    "### 4.3 Critical Flow Summary",
-    "### 5.1 Viewpoint-to-View Mapping",
-    "### 5.2 Context View",
-    "### 5.3 Composition View",
-    "### 5.4 Logical View",
-    "### 5.5 Dependency View",
-    "### 5.6 Information View",
-    "### 5.7 Interface View",
-    "### 5.8 Interaction / State / Algorithm Views (as applicable)",
-    "### 5.9 Resource View (as applicable)",
-    "### 6.1 Design Element Catalog (Formal Definitions)",
-    "### 6.2 Interfaces and Data Structures",
-    "### 6.3 Relationships",
-    "### 6.4 Constraints and Assumptions",
-    "### 6.5 Runtime State and Data Notes (Recommended)",
-    "### 7.1 Requirement/Concern to Design Mapping",
-    "### 7.2 Coverage and Gaps",
-    "### 8.1 Key Decisions",
-    "### 8.2 Alternatives Considered",
-    "### 8.3 Tradeoff Analysis",
-]
+FILE_HEADINGS: dict[str, list[str]] = {
+    INDEX_FILE: [
+        "# Software Design Description",
+        "## Document Control",
+        "## Document Map",
+    ],
+    "01-introduction.md": [
+        "## 1. Introduction",
+        "### 1.1 Purpose",
+        "### 1.2 Scope",
+        "### 1.3 Context",
+        "### 1.4 Intended Audience",
+        "### 1.5 References",
+        "### 1.6 Glossary",
+    ],
+    "02-system-overview.md": [
+        "## 2. System Overview",
+        "### 2.1 Product and Runtime Context",
+        "### 2.2 External Systems and Integrations",
+        "### 2.3 Operating Constraints",
+    ],
+    "03-stakeholders-and-concerns.md": [
+        "## 3. Stakeholders and Design Concerns",
+        "### 3.1 Stakeholder List",
+        "### 3.2 Concern Catalog",
+        "### 3.3 Non-Functional Targets (Recommended)",
+    ],
+    "04-architecture-overview.md": [
+        "## 4. Architecture Overview",
+        "### 4.1 Logical Architecture",
+        "### 4.2 Deployment and Runtime Topology",
+        "### 4.3 Critical Flow Summary",
+    ],
+    "05-viewpoints-and-views.md": [
+        "## 5. Viewpoints and Views",
+        "### 5.1 Viewpoint-to-View Mapping",
+        "### 5.2 Context View",
+        "### 5.3 Composition View",
+        "### 5.4 Logical View",
+        "### 5.5 Dependency View",
+        "### 5.6 Information View",
+        "### 5.7 Interface View",
+        "### 5.8 Interaction / State / Algorithm Views (as applicable)",
+        "### 5.9 Resource View (as applicable)",
+    ],
+    "06-design-elements-and-constraints.md": [
+        "## 6. Design Elements and Constraints",
+        "### 6.1 Design Element Catalog (Formal Definitions)",
+        "### 6.2 Interfaces and Data Structures",
+        "### 6.3 Relationships",
+        "### 6.4 Constraints and Assumptions",
+        "### 6.5 Runtime State and Data Notes (Recommended)",
+    ],
+    "07-traceability.md": [
+        "## 7. Traceability",
+        "### 7.1 Requirement/Concern to Design Mapping",
+        "### 7.2 Coverage and Gaps",
+    ],
+    "08-design-rationale.md": [
+        "## 8. Design Rationale",
+        "### 8.1 Key Decisions",
+        "### 8.2 Alternatives Considered",
+        "### 8.3 Tradeoff Analysis",
+    ],
+    "09-risks-and-mitigations.md": [
+        "## 9. Risks and Mitigations",
+    ],
+    "10-summary.md": [
+        "## 10. Summary",
+    ],
+    "11-data-design.md": [
+        "## 11. Data Design",
+        "### 11.1 ERD Summary",
+        "### 11.2 Data Description",
+        "### 11.3 Data Dictionary",
+        "### 11.4 Client-side Cache/Storage Model",
+    ],
+    "12-component-design.md": [
+        "## 12. Component Design",
+        "### 12.1 Subsystem Responsibilities",
+        "### 12.2 Internal Interfaces",
+        "### 12.3 Public/Private API Surface",
+        "### 12.4 Failure Handling and Retries",
+    ],
+    "13-human-interface-design.md": [
+        "## 13. Human Interface Design",
+        "### 13.1 UX Flow Summary",
+        "### 13.2 Key Screens/Wireframes",
+        "### 13.3 Interaction Constraints",
+    ],
+    "14-requirements-traceability-matrix.md": [
+        "## 14. Requirements Traceability Matrix",
+        "### 14.1 Requirement to Design Mapping Table",
+        "### 14.2 Coverage Status and Open Items",
+    ],
+    "15-appendices.md": [
+        "## 15. Appendices",
+        "### 15.1 Sequence Flows",
+        "### 15.2 State Models",
+        "### 15.3 Configuration Matrix",
+        "### 15.4 Cache Policy",
+        "### 15.5 Security and Privacy Notes",
+        "### 15.6 Testing Strategy",
+        "### 15.7 Risk Register",
+    ],
+    "16-design-decisions-locked.md": [
+        "## 16. Design Decisions (Locked)",
+        "### 16.1 Architectural Decisions and Rationale",
+        "### 16.2 Deferred Decisions",
+    ],
+    GAP_REPORT_FILE: [
+        "# SDD Gap Report",
+        "## Scope and Inputs",
+        "## Missing Required Content",
+        "## Weak or Implicit Rationale",
+        "## Traceability Gaps",
+        "## Recommended Fixes (Priority Ordered)",
+        "## Coverage Summary",
+    ],
+}
 
-DEEP_EXTENSION_REQUIRED_HEADINGS = [
-    "## 11. Data Design",
-    "## 12. Component Design",
-    "## 13. Human Interface Design",
-    "## 14. Requirements Traceability Matrix",
-    "## 15. Appendices",
-    "## 16. Design Decisions (Locked)",
-]
+CORE3_REQUIRED_HEADINGS: dict[str, list[str]] = {
+    "04-architecture-overview.md": ["## 4. Architecture Overview"],
+    "05-viewpoints-and-views.md": ["### 5.1 Viewpoint-to-View Mapping"],
+    "06-design-elements-and-constraints.md": ["### 6.1 Design Element Catalog (Formal Definitions)"],
+}
 
-DEEP_SUBSECTION_REQUIRED_HEADINGS = [
-    "### 11.1 ERD Summary",
-    "### 11.2 Data Description",
-    "### 11.3 Data Dictionary",
-    "### 11.4 Client-side Cache/Storage Model",
-    "### 12.1 Subsystem Responsibilities",
-    "### 12.2 Internal Interfaces",
-    "### 12.3 Public/Private API Surface",
-    "### 12.4 Failure Handling and Retries",
-    "### 13.1 UX Flow Summary",
-    "### 13.2 Key Screens/Wireframes",
-    "### 13.3 Interaction Constraints",
-    "### 14.1 Requirement to Design Mapping Table",
-    "### 14.2 Coverage Status and Open Items",
-    "### 15.1 Sequence Flows",
-    "### 15.2 State Models",
-    "### 15.3 Configuration Matrix",
-    "### 15.4 Cache Policy",
-    "### 15.5 Security and Privacy Notes",
-    "### 15.6 Testing Strategy",
-    "### 15.7 Risk Register",
-    "### 16.1 Architectural Decisions and Rationale",
-    "### 16.2 Deferred Decisions",
-]
+INDEX_REQUIRED_LINKS = BASE_FILE_ORDER[1:]
+DEEP_REQUIRED_LINKS = DEEP_FILE_ORDER
 
 INTERFACE_FIELD_PATTERNS = [
     ("component", r"(?i)\bComponent\s*:"),
@@ -116,16 +181,6 @@ QUALITY_SCENARIO_FIELD_PATTERNS = [
     ("measurement", r"(?i)\bMeasurement\s*:"),
 ]
 
-GAP_REQUIRED_HEADINGS = [
-    "# SDD Gap Report",
-    "## Scope and Inputs",
-    "## Missing Required Content",
-    "## Weak or Implicit Rationale",
-    "## Traceability Gaps",
-    "## Recommended Fixes (Priority Ordered)",
-    "## Coverage Summary",
-]
-
 
 def _parse_heading(heading: str) -> tuple[int, str]:
     match = re.match(r"^(#{1,6})\s+(.+?)\s*$", heading.strip())
@@ -135,10 +190,6 @@ def _parse_heading(heading: str) -> tuple[int, str]:
 
 
 def _normalize_heading_text(text: str) -> str:
-    """Normalize heading text for matching.
-
-    Supports markdown ATX closing hashes such as: ## Title ##
-    """
     normalized = text.strip()
     normalized = re.sub(r"\s+#+\s*$", "", normalized)
     return normalized.strip().lower()
@@ -194,22 +245,29 @@ def _add_check(
     )
 
 
+def _read_text(path: Path) -> str | None:
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+
+
 def _run_heading_checks(
     checks: list[dict[str, Any]],
     check_prefix: str,
     file_path: Path,
     required_headings: list[str],
     enforce_order: bool = False,
+    severity: str = "soft",
 ) -> None:
-    try:
-        text = file_path.read_text(encoding="utf-8")
-    except OSError as exc:
+    text = _read_text(file_path)
+    if text is None:
         _add_check(
             checks,
             f"{check_prefix}-readable",
             False,
             "hard",
-            f"Could not read {file_path}: {exc}",
+            f"Could not read {file_path}",
         )
         return
 
@@ -222,7 +280,7 @@ def _run_heading_checks(
             checks,
             f"{check_prefix}-heading-{normalized_text.replace(' ', '-')}",
             present,
-            "soft",
+            severity,
             f"{file_path} contains heading {heading!r} -> {present}",
         )
 
@@ -233,12 +291,11 @@ def _run_heading_checks(
             any(found_heading == required_heading for found_heading in found_iter)
             for required_heading in required_sequence
         )
-
         _add_check(
             checks,
             f"{check_prefix}-heading-order",
             in_order,
-            "soft",
+            severity,
             f"{file_path} required headings appear in expected order -> {in_order}",
         )
 
@@ -248,16 +305,16 @@ def _run_pattern_checks(
     check_prefix: str,
     file_path: Path,
     patterns: list[tuple[str, str]],
+    severity: str = "soft",
 ) -> None:
-    try:
-        text = file_path.read_text(encoding="utf-8")
-    except OSError as exc:
+    text = _read_text(file_path)
+    if text is None:
         _add_check(
             checks,
             f"{check_prefix}-readable",
             False,
             "hard",
-            f"Could not read {file_path}: {exc}",
+            f"Could not read {file_path}",
         )
         return
 
@@ -267,22 +324,55 @@ def _run_pattern_checks(
             checks,
             f"{check_prefix}-pattern-{label}",
             present,
-            "soft",
+            severity,
             f"{file_path} contains pattern {pattern!r} -> {present}",
         )
+
+
+def _run_index_link_checks(
+    checks: list[dict[str, Any]],
+    index_path: Path,
+    required_links: list[str],
+    severity: str = "soft",
+) -> None:
+    text = _read_text(index_path)
+    if text is None:
+        _add_check(
+            checks,
+            "index-readable",
+            False,
+            "hard",
+            f"Could not read {index_path}",
+        )
+        return
+
+    for filename in required_links:
+        escaped = re.escape(filename)
+        linked = re.search(rf"\[[^\]]+\]\({escaped}\)", text) is not None
+        _add_check(
+            checks,
+            f"index-link-{filename}",
+            linked,
+            severity,
+            f"{index_path} links to {filename} -> {linked}",
+        )
+
+
+def _required_files_for_profile(profile: str) -> list[str]:
+    files = list(BASE_FILE_ORDER)
+    if profile == "implementation-deep":
+        files.extend(DEEP_FILE_ORDER)
+    return files
 
 
 def run_checks(
     mode: str,
     docs_dir: Path,
-    allow_input_sdd: bool = False,
+    allow_input_index: bool = False,
     profile: str = "ieee-pragmatic",
     require_all_subsections: bool = False,
 ) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
-
-    sdd_path = docs_dir / "SDD.md"
-    gap_path = docs_dir / "SDD-gap-report.md"
 
     docs_exists = docs_dir.exists() and docs_dir.is_dir()
     _add_check(
@@ -295,18 +385,30 @@ def run_checks(
     if not docs_exists:
         return {
             "mode": mode,
+            "profile": profile,
             "docs_dir": str(docs_dir),
             "checks": checks,
         }
 
-    sdd_exists = sdd_path.exists()
-    gap_exists = gap_path.exists()
+    required_sdd_files = _required_files_for_profile(profile)
+    gap_path = docs_dir / GAP_REPORT_FILE
+    index_path = docs_dir / INDEX_FILE
 
+    for filename in required_sdd_files:
+        file_path = docs_dir / filename
+        severity = "hard" if mode != "review-only" else "input"
+        _add_check(
+            checks,
+            f"file-{filename}-exists",
+            file_path.exists(),
+            severity,
+            f"{file_path} exists -> {file_path.exists()}",
+        )
+
+    gap_exists = gap_path.exists()
     if mode == "draft+review":
-        _add_check(checks, "file-sdd-exists", sdd_exists, "hard", f"{sdd_path} exists -> {sdd_exists}")
         _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
     elif mode == "draft-only":
-        _add_check(checks, "file-sdd-exists", sdd_exists, "hard", f"{sdd_path} exists -> {sdd_exists}")
         _add_check(
             checks,
             "file-gap-optional",
@@ -316,31 +418,59 @@ def run_checks(
         )
     elif mode == "review-only":
         _add_check(checks, "file-gap-exists", gap_exists, "hard", f"{gap_path} exists -> {gap_exists}")
-        if allow_input_sdd:
+        if allow_input_index:
             _add_check(
                 checks,
-                "file-sdd-allowed",
+                "file-index-allowed",
                 True,
                 "soft",
-                f"{sdd_path} is allowed in review-only mode for colocated input (exists={sdd_exists})",
+                f"{index_path} is allowed in review-only mode for colocated input (exists={index_path.exists()})",
             )
-        else:
-            _add_check(checks, "file-sdd-absent", not sdd_exists, "hard", f"{sdd_path} absent -> {not sdd_exists}")
 
-    if sdd_exists and mode != "review-only":
-        _run_heading_checks(checks, "sdd", sdd_path, SDD_REQUIRED_HEADINGS)
-        _run_heading_checks(checks, "sdd-core3", sdd_path, CORE3_REQUIRED_HEADINGS)
-        if require_all_subsections:
-            _run_heading_checks(checks, "sdd-subsections", sdd_path, BASE_SUBSECTION_REQUIRED_HEADINGS)
-            _run_pattern_checks(checks, "sdd-interface-fields", sdd_path, INTERFACE_FIELD_PATTERNS)
-            _run_pattern_checks(checks, "sdd-quality-scenario", sdd_path, QUALITY_SCENARIO_FIELD_PATTERNS)
+    if index_path.exists():
+        index_severity = "soft" if mode != "review-only" else "input"
+        _run_heading_checks(
+            checks,
+            "index",
+            index_path,
+            FILE_HEADINGS[INDEX_FILE],
+            enforce_order=True,
+            severity=index_severity,
+        )
+        index_required_links = list(INDEX_REQUIRED_LINKS)
         if profile == "implementation-deep":
-            _run_heading_checks(checks, "sdd-deep", sdd_path, DEEP_EXTENSION_REQUIRED_HEADINGS)
-            if require_all_subsections:
-                _run_heading_checks(checks, "sdd-deep-subsections", sdd_path, DEEP_SUBSECTION_REQUIRED_HEADINGS)
+            index_required_links.extend(DEEP_REQUIRED_LINKS)
+        _run_index_link_checks(checks, index_path, index_required_links, severity=index_severity)
+
+    for filename in required_sdd_files:
+        if filename == INDEX_FILE:
+            continue
+        file_path = docs_dir / filename
+        if not file_path.exists():
+            continue
+        _run_heading_checks(
+            checks,
+            filename.replace(".md", ""),
+            file_path,
+            FILE_HEADINGS[filename],
+            enforce_order=require_all_subsections,
+            severity="soft" if mode != "review-only" else "input",
+        )
+
+    for filename, headings in CORE3_REQUIRED_HEADINGS.items():
+        file_path = docs_dir / filename
+        if file_path.exists() and mode != "review-only":
+            _run_heading_checks(checks, f"core3-{filename}", file_path, headings)
+
+    design_elements_path = docs_dir / "06-design-elements-and-constraints.md"
+    concerns_path = docs_dir / "03-stakeholders-and-concerns.md"
+    if design_elements_path.exists() and mode != "review-only" and require_all_subsections:
+        _run_pattern_checks(checks, "sdd-interface-fields", design_elements_path, INTERFACE_FIELD_PATTERNS)
+    if concerns_path.exists() and mode != "review-only" and require_all_subsections:
+        _run_pattern_checks(checks, "sdd-quality-scenario", concerns_path, QUALITY_SCENARIO_FIELD_PATTERNS)
 
     if gap_exists and mode != "draft-only":
-        _run_heading_checks(checks, "gap", gap_path, GAP_REQUIRED_HEADINGS)
+        _run_heading_checks(checks, "gap", gap_path, FILE_HEADINGS[GAP_REPORT_FILE], enforce_order=True)
 
     return {
         "mode": mode,
@@ -360,14 +490,14 @@ def main() -> int:
     )
     parser.add_argument(
         "--docs-dir",
-        default="docs",
-        help="Directory containing SDD.md and/or SDD-gap-report.md",
+        default="docs/sdd",
+        help="Directory containing the SDD document set and/or gap-report.md",
     )
     parser.add_argument(
         "--profile",
         choices=["ieee-pragmatic", "implementation-deep"],
         default="ieee-pragmatic",
-        help="Heading validation profile for SDD structure checks.",
+        help="File and heading validation profile for SDD structure checks.",
     )
     parser.add_argument(
         "--out",
@@ -380,35 +510,37 @@ def main() -> int:
         help="Do not fail overall result when only section checks fail.",
     )
     parser.add_argument(
-        "--allow-input-sdd",
+        "--allow-input-index",
         action="store_true",
-        help="In review-only mode, allow SDD.md to exist as colocated input.",
+        help="In review-only mode, allow index.md to exist as colocated input.",
     )
     parser.add_argument(
         "--require-all-subsections",
         action="store_true",
-        help="Require all template subsections (base; and deep subsections when profile is implementation-deep).",
+        help="Require all template subsections and per-file heading order checks.",
     )
     args = parser.parse_args()
 
     result = run_checks(
         args.mode,
         Path(args.docs_dir).resolve(),
-        allow_input_sdd=args.allow_input_sdd,
+        allow_input_index=args.allow_input_index,
         profile=args.profile,
         require_all_subsections=args.require_all_subsections,
     )
     checks = result["checks"]
     hard_fail_count = sum(1 for c in checks if c["severity"] == "hard" and not c["passed"])
     soft_fail_count = sum(1 for c in checks if c["severity"] == "soft" and not c["passed"])
+    input_fail_count = sum(1 for c in checks if c["severity"] == "input" and not c["passed"])
     strict_sections = not args.allow_soft_sections
     passed = hard_fail_count == 0 and (soft_fail_count == 0 or not strict_sections)
     result["hard_fail_count"] = hard_fail_count
     result["soft_fail_count"] = soft_fail_count
     result["strict_sections"] = strict_sections
     result["allow_soft_sections"] = args.allow_soft_sections
-    result["allow_input_sdd"] = args.allow_input_sdd
+    result["allow_input_index"] = args.allow_input_index
     result["require_all_subsections"] = args.require_all_subsections
+    result["input_fail_count"] = input_fail_count
     result["passed"] = passed
 
     for check in checks:
@@ -416,7 +548,7 @@ def main() -> int:
         print(f"[{status}] ({check['severity']}) {check['id']}: {check['evidence']}")
     print(
         f"Summary: profile={args.profile} checks={len(checks)} hard_fail={hard_fail_count} soft_fail={soft_fail_count} "
-        f"strict_sections={strict_sections} overall={'PASS' if passed else 'FAIL'}"
+        f"input_fail={input_fail_count} strict_sections={strict_sections} overall={'PASS' if passed else 'FAIL'}"
     )
 
     if args.out:
