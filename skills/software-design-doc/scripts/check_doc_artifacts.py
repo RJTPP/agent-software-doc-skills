@@ -100,7 +100,7 @@ def run_checks(
         readable = True
         try:
             latest_artifact.read_text(encoding="utf-8")
-        except OSError:
+        except (OSError, UnicodeDecodeError):
             readable = False
         _add_check(
             checks,
