@@ -329,7 +329,7 @@ def _run_index_link_checks(
 
     for filename in required_links:
         escaped = re.escape(filename)
-        linked = re.search(rf"\[[^\]]+\]\({escaped}\)", text) is not None
+        linked = re.search(rf"\[[^\]]+\]\((?:\./)?{escaped}(?:#[^)]*)?\)", text) is not None
         _add_check(
             checks,
             f"index-link-{filename}",
@@ -408,7 +408,7 @@ def run_checks(
             continue
         _run_heading_checks(
             checks,
-            filename.replace(".md", ""),
+            Path(filename).stem,
             file_path,
             FILE_HEADINGS[filename],
             enforce_order=require_all_subsections,
@@ -418,7 +418,7 @@ def run_checks(
     for filename, headings in CORE3_REQUIRED_HEADINGS.items():
         file_path = docs_dir / filename
         if file_path.exists() and mode not in {"review-only", "drift-check"}:
-            _run_heading_checks(checks, f"core3-{filename}", file_path, headings)
+            _run_heading_checks(checks, f"core3-{Path(filename).stem}", file_path, headings)
 
     design_elements_path = docs_dir / "06-design-elements-and-constraints.md"
     concerns_path = docs_dir / "02-03-system-context-and-concerns.md"
