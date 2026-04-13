@@ -149,9 +149,11 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 ### `drift-check`
 
 1. Accept an existing document-set SDD root or `index.md` plus repository context.
-2. Read `Doc Baseline Commit` from the input SDD entrypoint `index.md` and compare `<baseline>..HEAD` using git history and diff summaries.
-3. Produce a dated drift report under `.agent-doc-skills/sdd/drift/` with changed areas, likely affected SDD files/sections, and suggested next action.
-4. Do not rewrite source SDD files in this mode unless user explicitly asks after reviewing the drift report.
+2. Read `Doc Baseline Commit` from the input SDD entrypoint `index.md` and compare `<baseline>..HEAD` using git history, diff summaries, and targeted diffs for changed files.
+3. Use the diff as the scope boundary: inspect changed files and only directly related neighboring files needed to understand whether those changes affect SDD claims.
+4. If the baseline is missing, invalid, or unreachable, stop and ask the user to confirm a baseline source; do not infer one from timestamps or nearby commits.
+5. Produce a dated drift report under `.agent-doc-skills/sdd/drift/` with changed areas, likely affected SDD files/sections, and suggested next action.
+6. Do not rewrite source SDD files in this mode unless user explicitly asks after reviewing the drift report.
 
 ## Required Workflow
 
@@ -210,8 +212,17 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 6. Run drift assessment when mode is `drift-check`
 
 - Read `Doc Baseline Commit` from `index.md`.
-- If the baseline is missing, invalid, or not reachable in git history, stop and ask the user to confirm how to establish a new baseline instead of fabricating one.
-- Compare `<baseline>..HEAD` with `git log` and `git diff --stat` style summaries.
+- If the baseline is missing, invalid, or not reachable in git history, stop and ask the user to choose one confirmed baseline source:
+  - a specific commit/ref to use as the SDD baseline,
+  - the commit where the SDD was last reviewed,
+  - the current `HEAD` as a new baseline with no drift comparison for prior changes.
+- Do not infer the baseline from file modification time, artifact dates, or nearby commits unless the user explicitly approves that heuristic.
+- Compare `<baseline>..HEAD` with `git log`, `git diff --stat`, and targeted `git diff` output for changed files.
+- Use the diff as the scope boundary: inspect changed files and only directly related neighboring files needed to understand the changed behavior.
+- Do not perform a repository-wide current-code audit unless the user explicitly asks.
+- Classify changed areas by SDD impact: architecture, component responsibilities, interfaces/APIs, data model/storage, runtime/deployment, dependencies, quality attributes, risks, or no SDD impact.
+- Compare affected SDD sections against the scoped current implementation evidence.
+- Report stale, unsupported, or missing SDD content only when tied to changed files or directly related evidence.
 - Map changed areas to likely affected SDD files/sections.
 - Keep the output advisory; do not update canonical SDD files automatically.
 
@@ -308,7 +319,8 @@ Write dated drift reports under `.agent-doc-skills/sdd/drift/YYYY-MM-DD.md`.
 - Design elements are formally defined with component fields.
 - Terminology, component names, and version/references are internally consistent across files.
 - Gap report recommendations are actionable and prioritized.
-- Drift reports clearly map code changes back to likely SDD updates without editing canonical docs automatically.
+- Drift reports use git changes as the scope boundary and avoid full-codebase audits unless explicitly requested.
+- Drift reports clearly map changed implementation evidence back to likely SDD updates without editing canonical docs automatically.
 - No machine-specific assumptions or absolute local-only dependencies in document content.
 
 ## Example Requests That Should Trigger This Skill
