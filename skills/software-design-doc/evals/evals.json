@@ -7,7 +7,15 @@
       "mode": "draft+review",
       "prompt": "Create an SDD document set using an IEEE 1016-2009-inspired structure for a cloud-based invoice processing platform from this PRD summary: multi-tenant web app, REST API, OCR ingestion pipeline, role-based access, audit logs, and nightly reporting jobs. Use the default multi-file output root.",
       "expected_output": "Creates docs/sdd/index.md, the numbered base section files, and a dated gap report under .agent-doc-skills/sdd/gaps/ with explicit Architecture Overview, explicit Viewpoint-to-View Mapping, formal Design Element definitions, concern-driven views, and prioritized remediation actions.",
-      "files": []
+      "files": [],
+      "assertions": [
+        "Creates docs/sdd/index.md plus every canonical base section file: 01-introduction.md, 02-03-system-context-and-concerns.md, 04-architecture-overview.md, 05-viewpoints-and-views.md, 06-design-elements-and-constraints.md, 07-08-traceability-and-rationale.md, 09-10-risks-and-summary.md.",
+        "check_sdd_structure.py --mode draft+review --docs-dir docs/sdd --profile ieee-pragmatic exits 0.",
+        "The core-3 formal artifacts are present: '## 4. Architecture Overview' in 04, '### 5.1 Viewpoint-to-View Mapping' in 05, and '### 6.1 Design Element Catalog (Formal Definitions)' in 06 with Component/Responsibility/Inputs/Outputs/Dependencies/Public Functions fields.",
+        "A dated gap report exists at .agent-doc-skills/sdd/gaps/<current-date>.md and check_doc_artifacts.py --doc-kind sdd --artifact-kind gaps --min-count 1 exits 0.",
+        "index.md Document Control records a real Doc Baseline Commit (a git SHA taken from HEAD), not the '<git-commit-sha>' placeholder.",
+        "index.md links to every generated section file in canonical order."
+      ]
     },
     {
       "id": 2,
@@ -17,6 +25,13 @@
       "expected_output": "Produces a dated gap report under .agent-doc-skills/sdd/gaps/ identifying missing canonical files, missing required sections/artifacts, weak rationale, traceability gaps, and prioritized fixes for the document set.",
       "files": [
         "evals/fixtures/multi-file-review-incomplete"
+      ],
+      "assertions": [
+        "Produces a dated gap report under .agent-doc-skills/sdd/gaps/<current-date>.md.",
+        "The gap report uses the canonical headings in order: Scope and Inputs, Missing Required Content, Weak or Implicit Rationale, Traceability Gaps, Recommended Fixes (Priority Ordered), Coverage Summary.",
+        "The report names the canonical files absent from the fixture (e.g. 02-03, 05, 07-08, 09-10) as missing required content.",
+        "Recommended fixes are concrete and priority-ordered.",
+        "No files under evals/fixtures/multi-file-review-incomplete/ are modified."
       ]
     },
     {
@@ -27,6 +42,14 @@
       "expected_output": "Transforms the single-file input into docs/sdd/index.md plus the canonical numbered section files and a dated gap report under .agent-doc-skills/sdd/gaps/, with explicit architecture/views/elements formalization and migration-specific risks and remaining gaps.",
       "files": [
         "evals/fixtures/monolith-before-migration-sdd.md"
+      ],
+      "assertions": [
+        "Transforms the single-file input into docs/sdd/index.md plus the canonical numbered section files; the legacy single-file layout is not preserved as the output structure.",
+        "check_sdd_structure.py --mode draft+review --docs-dir docs/sdd exits 0.",
+        "Architecture/views/elements formalization is present (sections 4, 5.1, and 6.1 with formal fields).",
+        "Migration-specific content appears: service boundaries, async messaging, API gateway, and separate operational data stores, with migration risks captured in 09-10-risks-and-summary.md.",
+        "A dated gap report exists under .agent-doc-skills/sdd/gaps/<current-date>.md.",
+        "index.md Document Control records a real Doc Baseline Commit (git SHA), not the placeholder."
       ]
     },
     {
@@ -37,6 +60,11 @@
       "expected_output": "A dated gap report under .agent-doc-skills/sdd/gaps/ calls out missing canonical files, incomplete formal design element definitions, and the absence of traceability and view coverage.",
       "files": [
         "evals/fixtures/multi-file-review-incomplete"
+      ],
+      "assertions": [
+        "Produces a dated gap report under .agent-doc-skills/sdd/gaps/<current-date>.md using the canonical gap-report headings.",
+        "The report calls out missing canonical files, incomplete formal design element definitions (missing 6.1 fields), and absent traceability/view coverage.",
+        "No files under evals/fixtures/multi-file-review-incomplete/ are modified."
       ]
     },
     {
@@ -45,7 +73,14 @@
       "mode": "draft+review",
       "prompt": "Create an implementation-deep SDD document set for an invoice workflow platform with OCR, approvals, exports, reporting, and operator UI. Include data design, component design, human interface design, requirements traceability matrix, appendices, and locked decisions in the canonical multi-file layout.",
       "expected_output": "Creates docs/sdd/index.md, base numbered section files, deep files 11-16, and a dated gap report under .agent-doc-skills/sdd/gaps/ with explicit formal definitions, traceability, and implementation-depth coverage.",
-      "files": []
+      "files": [],
+      "assertions": [
+        "Creates the base section files plus the deep-profile extension files: 11-data-design.md, 12-component-design.md, 13-human-interface-design.md, 14-requirements-traceability-matrix.md, 15-appendices.md, 16-design-decisions-locked.md.",
+        "check_sdd_structure.py --mode draft+review --docs-dir docs/sdd --profile implementation-deep exits 0.",
+        "The core-3 formal artifacts (sections 4, 5.1, and 6.1 with full component fields) are present.",
+        "A dated gap report exists under .agent-doc-skills/sdd/gaps/<current-date>.md.",
+        "index.md links to the deep-profile files below the base list and records a real Doc Baseline Commit (git SHA), not the placeholder."
+      ]
     },
     {
       "id": 6,
@@ -55,6 +90,11 @@
       "expected_output": "Detects that the stored baseline commit is missing, invalid, or unreachable and asks the user to establish or reset the baseline instead of producing a normal drift report.",
       "files": [
         "evals/fixtures/multi-file-complete-base"
+      ],
+      "assertions": [
+        "Detects that the baseline commit is missing, invalid, or unreachable and asks the user to establish or reset a baseline source.",
+        "Does not fabricate a normal drift report or invent drift findings from timestamps or nearby commits.",
+        "No source SDD files under evals/fixtures/multi-file-complete-base/ are modified."
       ]
     }
   ]
