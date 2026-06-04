@@ -29,7 +29,7 @@ Mandatory preflight sequence:
 3. Recommend mode, detail profile, and output root from that context.
 4. Ask for user confirmation before drafting.
 
-Do not start drafting until preflight confirmation is received, unless user explicitly uses `/fast` or `/assume`.
+By default, proceed immediately after preflight with reasonable assumptions and list them in the output. If the user asks to confirm first, wait for confirmation before drafting.
 
 ## Copyright and Standards Safety (Mandatory)
 
@@ -66,22 +66,22 @@ If the user specifies a different canonical output root or artifact root, only a
 
 Mode shortcuts accepted in user prompts:
 
-- `/de` or `/draft+review` -> `draft+review`
-- `/d` or `/draft-only` -> `draft-only`
-- `/r` or `/review-only` -> `review-only`
-- `/dc` or `/drift-check` -> `drift-check`
+- `draft+review` (or `dr`) -> `draft+review`
+- `draft-only` (or `d`) -> `draft-only`
+- `review-only` (or `r`) -> `review-only`
+- `drift-check` (or `dc`) -> `drift-check`
 
 Mode resolution precedence:
 
-1. Explicit shortcut token in the prompt (`/de`, `/d`, `/r`, `/dc`, or long form)
+1. Explicit mode keyword in the prompt (`draft+review`, `draft-only`, `review-only`, `drift-check`, or shorthand `dr`, `d`, `r`, `dc`)
 2. Clear natural-language intent (for example `review only`)
 3. Default to `draft+review`
 
 Interaction options:
 
-- `/ask` (default): confirm scope/mode/inputs before drafting and request missing critical info.
-- `/fast`: proceed immediately with reasonable assumptions, then list assumptions in the output.
-- `/assume`: proceed with assumptions even if inputs are incomplete, and clearly mark assumption-based sections.
+- `ask`: confirm scope/mode/inputs before drafting and request missing critical info.
+- `fast` (default): proceed immediately with reasonable assumptions, then list assumptions in the output.
+- `assume`: proceed with assumptions even if inputs are incomplete, and clearly mark assumption-based sections.
 
 Detail profile options:
 
@@ -124,8 +124,8 @@ Before drafting, perform an intake check:
 2. Confirm whether repository inspection should be used.
 3. Identify missing critical inputs (PRD context, existing SDD input, key constraints).
 
-If critical inputs are missing, ask concise clarification questions first.
-Only skip clarification when user explicitly uses `/fast` or `/assume`.
+If critical inputs are missing and the user asked to confirm first, ask concise clarification questions.
+Otherwise, proceed with reasonable assumptions and note them. If inputs are heavily incomplete, clearly mark assumption-based sections.
 
 ## Modes
 
