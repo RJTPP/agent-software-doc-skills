@@ -22,6 +22,8 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [scripts/check_doc_artifacts.py](scripts/check_doc_artifacts.py) to validate dated gap and drift artifact history under `.agent-doc-skills/`.
 - Use [scripts/count_text_size.py](scripts/count_text_size.py) to inspect file size quickly (`chars`, `words`, `lines`) and optional Markdown heading breakdown (`--by-heading`).
 
+Script paths above are relative to this skill's own directory, which is usually not the current working directory when the skill runs (the skill is installed separately from the project being documented). Invoke each script at its real location — i.e. prefix the skill's install directory (the folder containing this `SKILL.md`) — rather than treating `scripts/...` as relative to the project root. The `--docs-dir`/`--artifact-root`/`--glob` arguments still point at paths inside the project being documented.
+
 Mandatory preflight sequence:
 
 1. Read available context first (PRD/SDD/repo docs relevant to the request).
@@ -30,6 +32,8 @@ Mandatory preflight sequence:
 4. Ask for user confirmation before drafting.
 
 By default, proceed immediately after preflight with reasonable assumptions and list them in the output. If the user asks to confirm first, wait for confirmation before drafting.
+
+Whenever an output needs a date — dated artifact filenames (`YYYY-MM-DD.md`), the drift-report title, and `Date of Issue` / `Last Reviewed On` in Document Control — use the actual current date from the environment (for example `date +%F`), not a remembered or assumed date.
 
 ## Copyright and Standards Safety (Mandatory)
 
@@ -178,7 +182,7 @@ Otherwise, proceed with reasonable assumptions and note them. If inputs are heav
 - When the source is a legacy single-file SDD, redistribute its validated content into the canonical document set instead of preserving the old layout.
 - `index.md` is the document entrypoint and must contain document control metadata plus links to every generated section file in canonical order.
 - Store document-set drift metadata only in `index.md`; do not duplicate it across section files.
-- Include `Doc Baseline Commit` and `Last Reviewed On` in `## Document Control` when repository context is available.
+- Populate `Doc Baseline Commit` and `Last Reviewed On` in `## Document Control` when repository context is available. This is what later `drift-check` runs read as their comparison baseline, so it must hold real values, not the template placeholders. Set `Doc Baseline Commit` from the current `HEAD` (`git rev-parse HEAD`) and `Last Reviewed On` to the actual current date. If there is no git repository (or `HEAD` is unborn), leave a brief note saying the baseline is unavailable instead of writing a fake SHA — a `drift-check` then has nothing to dead-end against.
 - Use original wording; do not quote or mirror copyrighted standards text.
 - Preserve required section ownership by file.
 - Keep core architecture sections at the architectural abstraction level (layers/components/responsibilities), not file-by-file implementation listings.
