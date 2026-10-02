@@ -29,7 +29,7 @@ Mandatory preflight sequence:
 1. Read available context first (PRD/SDD/repo docs relevant to the request).
 2. Optionally run a size check for large doc sets: `python3 scripts/count_text_size.py --glob "<sdd-root>/**/*.md" --by-heading`.
 3. Recommend mode, detail profile, and output root from that context.
-4. Ask for user confirmation before drafting.
+4. Ask for confirmation before drafting only when the user requests the `ask` interaction option or explicitly asks to confirm first.
 
 By default, proceed immediately after preflight with reasonable assumptions and list them in the output. If the user asks to confirm first, wait for confirmation before drafting.
 
@@ -128,8 +128,8 @@ Before drafting, perform an intake check:
 2. Confirm whether repository inspection should be used.
 3. Identify missing critical inputs (PRD context, existing SDD input, key constraints).
 
-If critical inputs are missing and the user asked to confirm first, ask concise clarification questions.
-Otherwise, proceed with reasonable assumptions and note them. If inputs are heavily incomplete, clearly mark assumption-based sections.
+If no requirements context or existing SDD is available, ask for the minimum input required by the Input Contract.
+For other missing details, ask concise clarification questions when the user requests `ask` or confirmation first. Otherwise, proceed with reasonable assumptions and note them. If inputs are heavily incomplete, clearly mark assumption-based sections.
 
 ## Modes
 
