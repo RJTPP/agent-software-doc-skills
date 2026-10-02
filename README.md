@@ -20,6 +20,7 @@
 | Skill                                             | Description                                                                                                                |
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [software-design-doc](skills/software-design-doc) | Draft, review, update, and drift-check **Software Design Descriptions (SDD)** with an **IEEE 1016-2009-inspired** pragmatic structure.† |
+| [architecture-decision-record](skills/architecture-decision-record) | Draft, review, and supersede **Architecture Decision Records (ADR)** with context, alternatives, consequences, and preserved history. |
 
 † See [Standards and Copyright Notice](#standards-and-copyright-notice).
 
@@ -73,6 +74,12 @@ $skill-installer install <SKILL_NAME> from RJTPP/agent-software-doc-skills
 npx skills add https://github.com/RJTPP/agent-software-doc-skills --skill software-design-doc
 ```
 
+- [`architecture-decision-record`](skills/architecture-decision-record/):
+
+```bash
+npx skills add https://github.com/RJTPP/agent-software-doc-skills --skill architecture-decision-record
+```
+
 ## Future Plans
 
 The items below are exploratory roadmap candidates and may change in the future.
@@ -83,7 +90,6 @@ The items below are exploratory roadmap candidates and may change in the future.
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | product-requirements-doc  | Elicit business goals from the user and produce a structured **Product Requirements Document (PRD)**.                                                                                                                                   | Industry practice (no formal IEEE standard)        |
 | software-requirements-doc | Draft and review **Software Requirements Specifications (SRS/SRD)** with an IEEE 29148-2018-inspired structure.                                                                                                                         | IEEE 29148-2018                                    |
-| architecture-decision-record | Capture, review, and update **Architecture Decision Records (ADR)** for major design changes, tradeoff decisions, technology adoptions/deprecations, and other decisions that need explicit rationale and alternatives.          | ADR practice / architecture decision records       |
 | readme-creator            | Create/update **README.md** from repository context, with optional related repository documentation consistency updates.                                                                                                                | Repository documentation best practices            |
 | docs-composer             | Compose the full documentation suite by coordinating the available skills together end-to-end.                                                                                                                                          | —                                                  |
 | docs-openspec-sync        | Bridge formal docs and [OpenSpec](https://github.com/Fission-AI/OpenSpec) tasks — convert SDD/SRD into OpenSpec change artifacts, or sync OpenSpec tasks back to docs. Detects if OpenSpec is installed and guides installation if not. | [OpenSpec](https://github.com/Fission-AI/OpenSpec) |

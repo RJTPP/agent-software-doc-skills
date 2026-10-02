@@ -1,0 +1,6 @@
+interface:
+  display_name: "Architecture Decision Record"
+  short_description: "Draft, review, and supersede ADRs with decision history"
+  default_prompt: "Use $architecture-decision-record to document or review a decision, preserving accepted history and linking relevant SDD sections."
+policy:
+  allow_implicit_invocation: true
