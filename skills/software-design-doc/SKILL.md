@@ -22,14 +22,18 @@ Create or review an SDD using an IEEE 1016-inspired structure while staying prag
 - Use [scripts/check_doc_artifacts.py](scripts/check_doc_artifacts.py) to validate dated gap and drift artifact history under `.agent-doc-skills/`.
 - Use [scripts/count_text_size.py](scripts/count_text_size.py) to inspect file size quickly (`chars`, `words`, `lines`) and optional Markdown heading breakdown (`--by-heading`).
 
+Script paths above are relative to this skill's own directory, which is usually not the current working directory when the skill runs (the skill is installed separately from the project being documented). Invoke each script at its real location — i.e. prefix the skill's install directory (the folder containing this `SKILL.md`) — rather than treating `scripts/...` as relative to the project root. The `--docs-dir`/`--artifact-root`/`--glob` arguments still point at paths inside the project being documented.
+
 Mandatory preflight sequence:
 
 1. Read available context first (PRD/SDD/repo docs relevant to the request).
 2. Optionally run a size check for large doc sets: `python3 scripts/count_text_size.py --glob "<sdd-root>/**/*.md" --by-heading`.
 3. Recommend mode, detail profile, and output root from that context.
-4. Ask for user confirmation before drafting.
+4. Ask for confirmation before drafting only when the user requests the `ask` interaction option or explicitly asks to confirm first.
 
-Do not start drafting until preflight confirmation is received, unless user explicitly uses `/fast` or `/assume`.
+By default, proceed immediately after preflight with reasonable assumptions and list them in the output. If the user asks to confirm first, wait for confirmation before drafting.
+
+Whenever an output needs a date — dated artifact filenames (`YYYY-MM-DD.md`), the drift-report title, and `Date of Issue` / `Last Reviewed On` in Document Control — use the actual current date from the environment (for example `date +%F`), not a remembered or assumed date.
 
 ## Copyright and Standards Safety (Mandatory)
 
@@ -66,22 +70,22 @@ If the user specifies a different canonical output root or artifact root, only a
 
 Mode shortcuts accepted in user prompts:
 
-- `/de` or `/draft+review` -> `draft+review`
-- `/d` or `/draft-only` -> `draft-only`
-- `/r` or `/review-only` -> `review-only`
-- `/dc` or `/drift-check` -> `drift-check`
+- `draft+review` (or `dr`) -> `draft+review`
+- `draft-only` (or `d`) -> `draft-only`
+- `review-only` (or `r`) -> `review-only`
+- `drift-check` (or `dc`) -> `drift-check`
 
 Mode resolution precedence:
 
-1. Explicit shortcut token in the prompt (`/de`, `/d`, `/r`, `/dc`, or long form)
+1. Explicit mode keyword in the prompt (`draft+review`, `draft-only`, `review-only`, `drift-check`, or shorthand `dr`, `d`, `r`, `dc`)
 2. Clear natural-language intent (for example `review only`)
 3. Default to `draft+review`
 
 Interaction options:
 
-- `/ask` (default): confirm scope/mode/inputs before drafting and request missing critical info.
-- `/fast`: proceed immediately with reasonable assumptions, then list assumptions in the output.
-- `/assume`: proceed with assumptions even if inputs are incomplete, and clearly mark assumption-based sections.
+- `ask`: confirm scope/mode/inputs before drafting and request missing critical info.
+- `fast` (default): proceed immediately with reasonable assumptions, then list assumptions in the output.
+- `assume`: proceed with assumptions even if inputs are incomplete, and clearly mark assumption-based sections.
 
 Detail profile options:
 
@@ -124,8 +128,8 @@ Before drafting, perform an intake check:
 2. Confirm whether repository inspection should be used.
 3. Identify missing critical inputs (PRD context, existing SDD input, key constraints).
 
-If critical inputs are missing, ask concise clarification questions first.
-Only skip clarification when user explicitly uses `/fast` or `/assume`.
+If no requirements context or existing SDD is available, ask for the minimum input required by the Input Contract.
+For other missing details, ask concise clarification questions when the user requests `ask` or confirmation first. Otherwise, proceed with reasonable assumptions and note them. If inputs are heavily incomplete, clearly mark assumption-based sections.
 
 ## Modes
 
@@ -178,7 +182,7 @@ Only skip clarification when user explicitly uses `/fast` or `/assume`.
 - When the source is a legacy single-file SDD, redistribute its validated content into the canonical document set instead of preserving the old layout.
 - `index.md` is the document entrypoint and must contain document control metadata plus links to every generated section file in canonical order.
 - Store document-set drift metadata only in `index.md`; do not duplicate it across section files.
-- Include `Doc Baseline Commit` and `Last Reviewed On` in `## Document Control` when repository context is available.
+- Populate `Doc Baseline Commit` and `Last Reviewed On` in `## Document Control` when repository context is available. This is what later `drift-check` runs read as their comparison baseline, so it must hold real values, not the template placeholders. Set `Doc Baseline Commit` from the current `HEAD` (`git rev-parse HEAD`) and `Last Reviewed On` to the actual current date. If there is no git repository (or `HEAD` is unborn), leave a brief note saying the baseline is unavailable instead of writing a fake SHA — a `drift-check` then has nothing to dead-end against.
 - Use original wording; do not quote or mirror copyrighted standards text.
 - Preserve required section ownership by file.
 - Keep core architecture sections at the architectural abstraction level (layers/components/responsibilities), not file-by-file implementation listings.
