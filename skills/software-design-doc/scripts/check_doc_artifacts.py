@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # Copy Reference: check_doc_artifacts.py
-# Version: 0.1.0
-# Synced-On: 2026-04-10
+# Version: 0.1.1
+# Synced-On: 2026-10-03
 # NOTE: This file is intentionally duplicated in:
 # - scripts/check_doc_artifacts.py
 # - skills/software-design-doc/scripts/check_doc_artifacts.py
+# - skills/architecture-decision-record/scripts/check_doc_artifacts.py
 """Validate dated documentation artifact history directories."""
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ from pathlib import Path
 import re
 from typing import Any
 
-SCRIPT_VERSION = "0.1.0"
+SCRIPT_VERSION = "0.1.1"
 DATE_FILE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\.md$")
 
 

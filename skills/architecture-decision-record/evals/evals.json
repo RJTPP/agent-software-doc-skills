@@ -1,0 +1,51 @@
+{
+  "skill_name": "architecture-decision-record",
+  "evals": [
+    {
+      "id": 1,
+      "name": "draft-proposed-decision",
+      "mode": "draft+review",
+      "prompt": "Create an ADR for this proposal, then review it: our invoice platform already uses PostgreSQL. We propose a transactional outbox and asynchronous workers for webhook delivery so an external outage cannot block invoice creation. We considered synchronous calls (simpler, but block requests) and Redis jobs (additional service to operate); the outbox keeps persistence in our existing database. This is not accepted yet. Use the default output paths.",
+      "expected_output": "Creates docs/adr/0001-<short-title>.md and index.md with Proposed status, evidenced alternatives and consequences, plus a current dated gap report.",
+      "files": [],
+      "assertions": [
+        "Creates exactly one new numbered record with ID 0001, current YYYY-MM-DD date, and Proposed status; no template placeholders remain.",
+        "The record contains Context, Decision, Alternatives Considered, Consequences, and Related Links in order and distinguishes supplied facts from assumptions.",
+        "index.md links to the new record and accurately lists its ID, title, Proposed status, date, and related links.",
+        "The rationale compares the supplied synchronous-call and Redis-job alternatives without inventing an acceptance decision or unprovided historical evidence.",
+        "The current run creates .agent-doc-skills/adr/gaps/<current-date>.md with a Review entry containing Scope and Inputs, Findings, Recommended Fixes, and Coverage Summary; the bundled artifact checker with --doc-kind adr --artifact-kind gaps exits 0."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "review-incomplete-record",
+      "mode": "review-only",
+      "prompt": "Review the existing ADR collection in docs/adr/ for missing context, rationale, alternatives, consequences, index accuracy, and decision links. Use review-only mode and save the findings; do not repair the source files.",
+      "expected_output": "Produces a dated gap report identifying incomplete content, stale index status, and invalid supersession links while preserving the reviewed source files.",
+      "files": ["evals/fixtures/incomplete-adr"],
+      "assertions": [
+        "Every source file under docs/adr/ remains byte-identical to the supplied fixture and no new canonical ADR is created.",
+        "Findings identify missing Alternatives Considered and Consequences sections, unsupported or incomplete rationale, the index/record status mismatch, and the broken Supersedes target.",
+        "Findings distinguish a proposed choice from acceptance and recommend concrete fixes in priority order.",
+        "The current run creates .agent-doc-skills/adr/gaps/<current-date>.md with all four review sections; historical reports alone do not satisfy this assertion.",
+        "The bundled artifact checker with --doc-kind adr --artifact-kind gaps exits 0 and the report accurately states the reviewed scope and source preservation."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "supersede-accepted-decision",
+      "mode": "supersede",
+      "prompt": "Supersede Accepted ADR 0007 in docs/adr/. We explicitly accept replacing synchronous webhook delivery with a transactional outbox in PostgreSQL and asynchronous delivery workers. An external outage must no longer block invoice creation. Synchronous calls were simpler but coupled request latency to the provider; Redis jobs would add another service to operate. Preserve the old decision history and link the relevant existing SDD rationale, but do not edit the SDD. Review the completed supersession.",
+      "expected_output": "Creates Accepted ADR 0008, marks 0007 Superseded with reciprocal links, updates the index, preserves old decision content and SDD files, and saves a dated gap report.",
+      "files": ["evals/fixtures/accepted-decision"],
+      "assertions": [
+        "Creates exactly one new ADR with ID 0008 and Accepted status; it links back to ADR 0007 using Supersedes.",
+        "ADR 0007 changes only its Status to Superseded and gains a Superseded By link; its ID, original date, and all decision sections remain unchanged.",
+        "Both reciprocal links resolve, and index.md preserves 0007 and adds 0008 in numeric order with accurate dates, statuses, and links.",
+        "The replacement contains all five required sections and rationale grounded in the supplied outbox, synchronous-call, and Redis alternatives.",
+        "The relevant SDD rationale is linked or recommended for update, and every source SDD file remains byte-identical to the fixture.",
+        "The current run creates a dated ADR gap report with all four review sections and the bundled artifact checker exits 0; older artifacts alone cannot satisfy this assertion."
+      ]
+    }
+  ]
+}
